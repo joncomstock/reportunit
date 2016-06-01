@@ -143,7 +143,7 @@ namespace ReportUnit.Parser
             testSuite.Status = ReportUtil.GetFixtureStatus(testSuite.TestList);
         }
 
-        private RunInfo CreateRunInfo(XDocument doc, Report report)
+        public RunInfo CreateRunInfo(XDocument doc, Report report)
         {
             // run-info & environment values -> RunInfo
             RunInfo runInfo = new RunInfo();
@@ -155,6 +155,21 @@ namespace ReportUnit.Parser
             runInfo.Info.Add("Machine Name", doc.Descendants(xns + "UnitTestResult").First().Attribute("computerName").Value);
 
             return runInfo;
+        }
+
+        public RunInfo CreateRunInfo(XElement elem, Report report)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Report ProcessTestSuites(XDocument doc, Report report)
+        {
+            throw new NotImplementedException();
+        }
+
+        public TestSuite ProcessTestCases(Report report, XElement ts, TestSuite testSuite)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -36,7 +36,7 @@ namespace ReportUnit.Parser
             report.TestRunner = TestRunner.Gallio;
 
             // run-info & environment values -> RunInfo
-            var runInfo = CreateRunInfo(doc, report).Info;
+            var runInfo = CreateRunInfo(doc.Descendants(xns + "children").First(), report).Info;
             report.AddRunInfo(runInfo);
 
             // test cases
@@ -57,14 +57,16 @@ namespace ReportUnit.Parser
             report.StartTime = testPackageRun.Attribute("startTime").Value;
             report.EndTime = testPackageRun.Attribute("endTime").Value;
 
+            //report = ProcessTestSuites(doc, report);
+
             var suitesList = new List<string>();
             TestSuite testSuite = null;
 
             tests.AsParallel().ToList().ForEach(tc =>
             {
                 var testSuiteName = tc.Attribute("fullName").Value;
-                testSuiteName = testSuiteName.Contains('/') 
-                    ? testSuiteName.Split('/')[testSuiteName.Split('/').Length - 2] 
+                testSuiteName = testSuiteName.Contains('/')
+                    ? testSuiteName.Split('/')[testSuiteName.Split('/').Length - 2]
                     : testSuiteName;
 
                 if (!suitesList.Contains(testSuiteName))
@@ -91,33 +93,33 @@ namespace ReportUnit.Parser
                 var entry = tc.Descendants(xns + "entry");
 
                 // description
-                var description = entry != null 
-                    ? entry.Where(x => x.Attribute("key").Value.Equals("Description")) 
+                var description = entry != null
+                    ? entry.Where(x => x.Attribute("key").Value.Equals("Description"))
                     : null;
-                test.Description =  description != null && description.Count() > 0 
-                    ? description.First().Value 
+                test.Description = description != null && description.Count() > 0
+                    ? description.First().Value
                     : "";
 
                 // error and other status messages
-                var ignoreReason = entry != null 
-                    ? entry.Where(x => x.Attribute("key").Value.Equals("IgnoreReason")) 
+                var ignoreReason = entry != null
+                    ? entry.Where(x => x.Attribute("key").Value.Equals("IgnoreReason"))
                     : null;
-                test.StatusMessage = ignoreReason != null && ignoreReason.Count() > 0 
-                    ? ignoreReason.First().Value 
+                test.StatusMessage = ignoreReason != null && ignoreReason.Count() > 0
+                    ? ignoreReason.First().Value
                     : "";
 
                 var testLog = tc.Parent.Descendants(xns + "testLog");
-                test.StatusMessage += testLog != null && testLog.Count() > 0 
-                    ? testLog.First().Value 
+                test.StatusMessage += testLog != null && testLog.Count() > 0
+                    ? testLog.First().Value
                     : "";
 
                 // assign categories
-                var category = entry != null 
-                    ? entry.Where(x => x.Attribute("key").Value.Equals("Category")) 
+                var category = entry != null
+                    ? entry.Where(x => x.Attribute("key").Value.Equals("Category"))
                     : null;
                 if (category != null && category.Count() > 0)
                 {
-                    category.ToList().ForEach(s => 
+                    category.ToList().ForEach(s =>
                     {
                         string cat = s.Value;
 
@@ -133,7 +135,7 @@ namespace ReportUnit.Parser
             return report;
         }
 
-        private RunInfo CreateRunInfo(XDocument doc, Report report)
+        public RunInfo CreateRunInfo(XElement elem, Report report)
         {
             // run-info & environment values -> RunInfo
             RunInfo runInfo = new RunInfo();
@@ -141,7 +143,7 @@ namespace ReportUnit.Parser
             runInfo.TestRunner = report.TestRunner;
             runInfo.Info.Add("File", report.AssemblyName);
 
-            var children = doc.Descendants(xns + "children").First();
+            var children = elem;
 
             var testKind = children.Descendants(xns + "entry")
                 .Where(x => x.Attribute("key").Value.Equals("TestKind", StringComparison.CurrentCultureIgnoreCase));
@@ -172,6 +174,16 @@ namespace ReportUnit.Parser
             runInfo.Info.Add("Version", versionValue);
 
             return runInfo;
+        }
+
+        public Report ProcessTestSuites(XDocument doc, Report report)
+        {
+            throw new NotImplementedException();
+        }
+
+        public TestSuite ProcessTestCases(Report report, XElement ts, TestSuite testSuite)
+        {
+            throw new NotImplementedException();
         }
     }
 }

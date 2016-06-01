@@ -11,6 +11,58 @@ namespace ReportUnit.Utils
 {
     internal class ReportUtil
     {
+        /* A */
+        public const string Assembly = "assembly";
+        /* D */
+        public const string Date = "date";
+        /* E */
+        public const string EndTime = "end-time";
+        public const string Errors = "errors";
+        /* F */
+        public const string Failed = "failed";
+        public const string Failure = "failure";
+        public const string Failures = "failures";
+        /* I */
+        public const string Inconclusive = "inconclusive";
+        public const string Ignored = "ignored";
+        /* M */
+        public const string Message = "message";
+        /* N */
+        public const string Name = "name";
+        /* O */
+        public const string Output = "output";
+        /* P */
+        public const string Passed = "passed";
+        public const string Property = "property";
+        /* R */
+        public const string Reason = "reason";
+        public const string Result = "result";
+        /* S */
+        public const string Skipped = "skipped";
+        public const string StackTrace = "stack-trace";
+        public const string StartTime = "start-time";
+        /* T */        
+        public const string Time = "time";
+        public const string Type = "type";
+        /* V */
+        public const string Value = "value";
+        
+        /* NUnit specific ? */
+        public const string TestSuite = "test-suite";
+        public const string TestCase = "test-case";
+        public const string Categories = "categories";
+        public const string Category = "category";
+        public const string Description = "description";
+
+        /* XUnit specific ? */
+        public const string Fail = "fail";
+        public const string Test = "test";
+        public const string Pass = "pass";
+        public const string RunDate = "run-date";
+        public const string RunTime = "run-time";
+        public const string ExceptionType = "exception-type";
+
+
         // fixture level status codes
         public static Status GetFixtureStatus(IEnumerable<Test> tests)
         {
@@ -27,36 +79,6 @@ namespace ReportUnit.Utils
             if (statuses.Any(x => x == Status.Skipped)) return Status.Skipped;
 
             return Status.Unknown;
-        }
-
-        /// <summary>
-        /// Returns categories for the direct children or all descendents of an XElement
-        /// </summary>
-        /// <param name="elem">XElement to parse</param>
-        /// <param name="allDescendents">If true, return all descendent categories.  If false, only direct children</param>
-        /// <returns></returns>
-        public static HashSet<string> GetCategories(XElement elem, bool allDescendents)
-        {
-            //Define which function to use
-            var parser = allDescendents
-                ? new Func<XElement, string, IEnumerable<XElement>>((e, s) => e.Descendants(s))
-                : new Func<XElement, string, IEnumerable<XElement>>((e, s) => e.Elements(s));
-
-            //Grab unique categories
-            HashSet<string> categories = new HashSet<string>();
-            bool hasCategories = parser(elem, "categories").Any();
-            if (hasCategories)
-            {
-                List<XElement> cats = parser(elem, "categories").Elements("category").ToList();
-
-                cats.ForEach(x =>
-                {
-                    string cat = x.Attribute("name").Value;
-                    categories.Add(cat);
-                });
-            }
-
-            return categories;
-        }
+        }       
     }
 }

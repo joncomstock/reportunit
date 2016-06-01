@@ -8,7 +8,7 @@ namespace ReportUnit.Model
     /// <summary>
     /// Detailed information on the environment and machine that the tests were run under
     /// </summary>
-    internal class RunInfo
+    public class RunInfo
     {
         public RunInfo()
         {

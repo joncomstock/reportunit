@@ -7,6 +7,7 @@ using System.Xml;
 
 using ReportUnit.Logging;
 using ReportUnit.Model;
+using System.Xml.Linq;
 
 namespace ReportUnit.Parser
 {
