@@ -23,7 +23,7 @@ namespace ReportUnit.Parser
         private XNamespace xns = "http://www.gallio.org/";
         private Logger logger = Logger.GetLogger();
 
-        public Report Parse(string resultsFile)
+        public Report Parse(string resultsFile, TestRunner testRunner)
         {
             this.resultsFile = resultsFile;
 
@@ -33,7 +33,7 @@ namespace ReportUnit.Parser
 
             report.FileName = Path.GetFileNameWithoutExtension(resultsFile);
             report.AssemblyName = doc.Descendants(xns + "files").First().Descendants(xns + "file").First().Value;
-            report.TestRunner = TestRunner.Gallio;
+            report.TestRunner = testRunner;
 
             // run-info & environment values -> RunInfo
             var runInfo = CreateRunInfo(doc.Descendants(xns + "children").First(), report).Info;
@@ -174,16 +174,6 @@ namespace ReportUnit.Parser
             runInfo.Info.Add("Version", versionValue);
 
             return runInfo;
-        }
-
-        public Report ProcessTestSuites(XDocument doc, Report report)
-        {
-            throw new NotImplementedException();
-        }
-
-        public TestSuite ProcessTestCases(Report report, XElement ts, TestSuite testSuite)
-        {
-            throw new NotImplementedException();
         }
     }
 }

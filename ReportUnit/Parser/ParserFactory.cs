@@ -90,7 +90,20 @@ namespace ReportUnit.Parser
 
                     // check for test-suite nodes - if it has those - its probably nunit tests
                     var testSuiteNodes = doc.SelectNodes("//test-suite");
-                    if (testSuiteNodes != null && testSuiteNodes.Count > 0) return TestRunner.NUnit;
+                    var resultNodes = doc.SelectNodes("//test-case");
+                    bool isNUnitV1 = true;
+                    if (resultNodes != null && resultNodes.Count > 0)
+                    {
+                        foreach (XmlNode node in resultNodes)
+                        {
+                            if (node.Attributes != null && node.Attributes["result"] != null)
+                            {
+                                isNUnitV1 = false;
+                            }
+                        }
+                    }
+                   
+                    if (testSuiteNodes != null && testSuiteNodes.Count > 0) return (isNUnitV1) ? TestRunner.NUnitV1 : TestRunner.NUnit;
                 }
             }
             catch { }

@@ -23,17 +23,18 @@ namespace ReportUnit.Parser
         private XNamespace xns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
         private Logger logger = Logger.GetLogger();
 
-        public Report Parse(string resultsFile)
+        public Report Parse(string resultsFile, TestRunner testRunner)
         {
             XDocument doc = XDocument.Load(resultsFile);
 
             Report report = new Report();
 
             report.FileName = Path.GetFileNameWithoutExtension(resultsFile);
-            report.TestRunner = TestRunner.MSTest2010;
+            report.TestRunner = testRunner;
 
             // run-info & environment values -> RunInfo
-            var runInfo = CreateRunInfo(doc, report).Info;
+            var elem = doc.Descendants(xns + "UnitTestResult").First();
+            var runInfo = CreateRunInfo(elem, report).Info;
             report.AddRunInfo(runInfo);
 
             // report counts
@@ -143,7 +144,7 @@ namespace ReportUnit.Parser
             testSuite.Status = ReportUtil.GetFixtureStatus(testSuite.TestList);
         }
 
-        public RunInfo CreateRunInfo(XDocument doc, Report report)
+        public RunInfo CreateRunInfo(XElement elem, Report report)
         {
             // run-info & environment values -> RunInfo
             RunInfo runInfo = new RunInfo();
@@ -152,24 +153,9 @@ namespace ReportUnit.Parser
             runInfo.Info.Add("TestRunner Version", "");
             runInfo.Info.Add("File", report.FileName);
 
-            runInfo.Info.Add("Machine Name", doc.Descendants(xns + "UnitTestResult").First().Attribute("computerName").Value);
+            runInfo.Info.Add("Machine Name", elem.Attribute("computerName").Value);
 
             return runInfo;
-        }
-
-        public RunInfo CreateRunInfo(XElement elem, Report report)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Report ProcessTestSuites(XDocument doc, Report report)
-        {
-            throw new NotImplementedException();
-        }
-
-        public TestSuite ProcessTestCases(Report report, XElement ts, TestSuite testSuite)
-        {
-            throw new NotImplementedException();
         }
     }
 }

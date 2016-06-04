@@ -16,170 +16,171 @@ namespace ReportUnit.Parser
 
         //private Logger logger = Logger.GetLogger();
 
-        public Report Parse(string resultsFile)
-        {
-            this.resultsFile = resultsFile;
+        //public new Report Parse(string resultsFile, TestRunner testRunner)
+        //{
+        //    this.resultsFile = resultsFile;
 
-            XDocument doc = XDocument.Load(resultsFile);
+        //    XDocument doc = XDocument.Load(resultsFile);
 
-            Report report = new Report();
+        //    Report report = new Report();
 
-            var assemblyNode = doc.Root.Descendants("assembly").FirstOrDefault();
-            report = InitReport(assemblyNode, report);
+        //    var node = ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Root));
+        //    var assemblyNode = doc.Root.Descendants(node).FirstOrDefault();
+        //    report = InitReport(assemblyNode, report, testRunner);
 
-            //run - info & environment values->RunInfo
-            var runInfo = CreateRunInfo(assemblyNode, report);
-            if (runInfo != null)
-            {
-                report.AddRunInfo(runInfo.Info);
-            }
+        //    //run - info & environment values->RunInfo
+        //    var runInfo = CreateRunInfo(assemblyNode, report);
+        //    if (runInfo != null)
+        //    {
+        //        report.AddRunInfo(runInfo.Info);
+        //    }
 
-            // report counts
-            report.Total = doc.Descendants(ReportUtil.Test).Count();
+        //    // report counts
+        //    report.Total = doc.Descendants(ReportUtil.Test).Count();
 
-            report.Passed =
-                assemblyNode.Attribute(ReportUtil.Passed) != null
-                    ? Int32.Parse(assemblyNode.Attribute(ReportUtil.Passed).Value)
-                    : doc.Descendants(ReportUtil.Test).Where(x => x.Attribute(ReportUtil.Result).Value.Equals(ReportUtil.Pass, StringComparison.CurrentCultureIgnoreCase)).Count();
+        //    report.Passed =
+        //        assemblyNode.Attribute(ReportUtil.Passed) != null
+        //            ? Int32.Parse(assemblyNode.Attribute(ReportUtil.Passed).Value)
+        //            : doc.Descendants(ReportUtil.Test).Count(x => x.Attribute(ReportUtil.Result).Value.Equals(ReportUtil.Pass, StringComparison.CurrentCultureIgnoreCase));
 
-            report.Failed =
-                assemblyNode.Attribute(ReportUtil.Failed) != null
-                    ? Int32.Parse(assemblyNode.Attribute(ReportUtil.Failed).Value)
-                    : doc.Descendants(ReportUtil.Test).Where(x => x.Attribute(ReportUtil.Result).Value.Equals(ReportUtil.Fail, StringComparison.CurrentCultureIgnoreCase)).Count();
+        //    report.Failed =
+        //        assemblyNode.Attribute(ReportUtil.Failed) != null
+        //            ? Int32.Parse(assemblyNode.Attribute(ReportUtil.Failed).Value)
+        //            : doc.Descendants(ReportUtil.Test).Count(x => x.Attribute(ReportUtil.Result).Value.Equals(ReportUtil.Fail, StringComparison.CurrentCultureIgnoreCase));
 
-            report.Errors =
-                assemblyNode.Attribute(ReportUtil.Errors) != null
-                    ? Int32.Parse(assemblyNode.Attribute(ReportUtil.Errors).Value)
-                    : 0;
+        //    report.Errors =
+        //        assemblyNode.Attribute(ReportUtil.Errors) != null
+        //            ? Int32.Parse(assemblyNode.Attribute(ReportUtil.Errors).Value)
+        //            : 0;
 
-            report.Inconclusive =
-                assemblyNode.Attribute(ReportUtil.Inconclusive) != null
-                    ? Int32.Parse(assemblyNode.Attribute(ReportUtil.Inconclusive).Value)
-                    : 0;
+        //    report.Inconclusive =
+        //        assemblyNode.Attribute(ReportUtil.Inconclusive) != null
+        //            ? Int32.Parse(assemblyNode.Attribute(ReportUtil.Inconclusive).Value)
+        //            : 0;
 
-            report.Skipped =
-                assemblyNode.Attribute(ReportUtil.Skipped) != null
-                    ? Int32.Parse(assemblyNode.Attribute(ReportUtil.Skipped).Value)
-                    : Int32.Parse(assemblyNode.Attribute(ReportUtil.Skipped).Value);
-                
-            report.Skipped +=
-                assemblyNode.Attribute(ReportUtil.Ignored) != null
-                    ? Int32.Parse(assemblyNode.Attribute(ReportUtil.Ignored).Value)
-                    : 0;
+        //    report.Skipped =
+        //        assemblyNode.Attribute(ReportUtil.Skipped) != null
+        //            ? Int32.Parse(assemblyNode.Attribute(ReportUtil.Skipped).Value)
+        //            : 0;
 
-            // report duration
-            report.StartTime =
-                assemblyNode.Attribute(ReportUtil.RunDate) != null && assemblyNode.Attribute(ReportUtil.RunTime) != null
-                    ? assemblyNode.Attribute(ReportUtil.RunDate).Value + " " + assemblyNode.Attribute(ReportUtil.RunTime).Value
-                    : "";
+        //    report.Skipped +=
+        //        assemblyNode.Attribute(ReportUtil.Ignored) != null
+        //            ? Int32.Parse(assemblyNode.Attribute(ReportUtil.Ignored).Value)
+        //            : 0;
 
-            report.EndTime =
-                assemblyNode.Attribute(ReportUtil.EndTime) != null
-                    ? assemblyNode.Attribute(ReportUtil.EndTime).Value
-                    : "";
+        //    // report duration
+        //    report.StartTime =
+        //        assemblyNode.Attribute(ReportUtil.RunDate) != null && assemblyNode.Attribute(ReportUtil.RunTime) != null
+        //            ? assemblyNode.Attribute(ReportUtil.RunDate).Value + " " + assemblyNode.Attribute(ReportUtil.RunTime).Value
+        //            : "";
 
-            //test suites
-            IEnumerable<XElement> collections = doc.Descendants("collection");
+        //    report.EndTime =
+        //        assemblyNode.Attribute(ReportUtil.EndTime) != null
+        //            ? assemblyNode.Attribute(ReportUtil.EndTime).Value
+        //            : "";
 
-            collections.AsParallel().ToList().ForEach(c =>
-            {
-                var testSuite = new TestSuite();
-                testSuite.Name = c.Attribute(ReportUtil.Name).Value;
+        //    //test suites
+        //    IEnumerable<XElement> collections = doc.Descendants("collection");
 
-                // Suite Time Info
-                testSuite.StartTime =
-                    String.IsNullOrEmpty(testSuite.StartTime) && c.Attribute(ReportUtil.Time) != null
-                        ? c.Attribute(ReportUtil.Time).Value
-                        : "";
+        //    collections.AsParallel().ToList().ForEach(c =>
+        //    {
+        //        var testSuite = new TestSuite();
+        //        testSuite.Name = c.Attribute(ReportUtil.Name).Value;
 
-                testSuite.EndTime = "";
+        //        // Suite Time Info
+        //        testSuite.StartTime =
+        //            String.IsNullOrEmpty(testSuite.StartTime) && c.Attribute(ReportUtil.Time) != null
+        //                ? c.Attribute(ReportUtil.Time).Value
+        //                : "";
 
-                // any error messages and/or stack-trace
-                var failure = c.Element(ReportUtil.Failure);
-                if (failure != null)
-                {
-                    var message = failure.Element(ReportUtil.Message);
-                    if (message != null)
-                    {
-                        testSuite.StatusMessage = message.Value;
-                    }
+        //        testSuite.EndTime = "";
 
-                    var stackTrace = failure.Element(ReportUtil.StackTrace);
-                    if (stackTrace != null && !string.IsNullOrWhiteSpace(stackTrace.Value))
-                    {
-                        testSuite.StatusMessage = string.Format(
-                            "{0}\n\nStack trace:\n{1}", testSuite.StatusMessage, stackTrace.Value);
-                    }
-                }
+        //        // any error messages and/or stack-trace
+        //        var failure = c.Element(ReportUtil.Failure);
+        //        if (failure != null)
+        //        {
+        //            var message = failure.Element(ReportUtil.Message);
+        //            if (message != null)
+        //            {
+        //                testSuite.StatusMessage = message.Value;
+        //            }
 
-                // get test suite level categories
-                //var suiteCategories = ReportUtil.GetCategories(c, false);
+        //            var stackTrace = failure.Element(ReportUtil.StackTrace);
+        //            if (stackTrace != null && !string.IsNullOrWhiteSpace(stackTrace.Value))
+        //            {
+        //                testSuite.StatusMessage = string.Format(
+        //                    "{0}\n\nStack trace:\n{1}", testSuite.StatusMessage, stackTrace.Value);
+        //            }
+        //        }
 
-                // Test Cases
-                c.Descendants(ReportUtil.Test).AsParallel().ToList().ForEach(tc =>
-                {
-                    var test = new Test();
+        //        // get test suite level categories
+        //        //var suiteCategories = ReportUtil.GetCategories(c, false);
 
-                    test.Name = tc.Attribute(ReportUtil.Name).Value;
-                    test.Status = StatusExtensions.ToStatus(tc.Attribute(ReportUtil.Result).Value);
+        //        // Test Cases
+        //        c.Descendants(ReportUtil.Test).AsParallel().ToList().ForEach(tc =>
+        //        {
+        //            var test = new Test();
 
-                    // main a master list of all status
-                    // used to build the status filter in the view
-                    report.StatusList.Add(test.Status);
+        //            test.Name = tc.Attribute(ReportUtil.Name).Value;
+        //            test.Status = StatusExtensions.ToStatus(tc.Attribute(ReportUtil.Result).Value);
 
-                    // TestCase Time Info
-                    test.StartTime =
-                        tc.Attribute(ReportUtil.Time) != null
-                            ? tc.Attribute(ReportUtil.Time).Value
-                            : "";
-                    test.EndTime = "";
+        //            // main a master list of all status
+        //            // used to build the status filter in the view
+        //            report.StatusList.Add(test.Status);
 
-                    // get test case level categories
-                    var categories = GetCategories(tc, true);
+        //            // TestCase Time Info
+        //            test.StartTime =
+        //                tc.Attribute(ReportUtil.Time) != null
+        //                    ? tc.Attribute(ReportUtil.Time).Value
+        //                    : "";
+        //            test.EndTime = "";
 
-                    test.CategoryList.AddRange(categories);
-                    report.CategoryList.AddRange(categories);
+        //            // get test case level categories
+        //            var categories = GetCategories(tc, true);
 
-                    var failureNode = tc.Element(ReportUtil.Failure);
-                    var messageNode = failureNode != null ? failureNode.Element(ReportUtil.Message) : null;
-                    var stackTraceNode = failureNode != null ? failureNode.Element(ReportUtil.StackTrace) : null;
-                    var reasonNode = tc.Element(ReportUtil.Reason);                    
+        //            test.CategoryList.AddRange(categories);
+        //            report.CategoryList.AddRange(categories);
 
-                    // error and other status messages
-                    test.StatusMessage =
-                        failureNode != null
-                            ? failureNode.Attribute(ReportUtil.ExceptionType).Value.Trim()
-                            : "";
+        //            var failureNode = tc.Element(ReportUtil.Failure);
+        //            var messageNode = failureNode != null ? failureNode.Element(ReportUtil.Message) : null;
+        //            var stackTraceNode = failureNode != null ? failureNode.Element(ReportUtil.StackTrace) : null;
+        //            var reasonNode = tc.Element(ReportUtil.Reason);
 
-                    test.StatusMessage +=
-                        failureNode != null
-                            ? messageNode.Value.Trim()
-                            : "";
+        //            // error and other status messages
+        //            test.StatusMessage =
+        //                failureNode != null
+        //                    ? failureNode.Attribute(ReportUtil.ExceptionType).Value.Trim()
+        //                    : "";
 
-                    test.StatusMessage +=
-                        failureNode != null
-                            ? stackTraceNode != null
-                                ? stackTraceNode.Value.Trim()
-                                : ""
-                            : "";
+        //            test.StatusMessage +=
+        //                failureNode != null
+        //                    ? messageNode.Value.Trim()
+        //                    : "";
 
-                    test.StatusMessage += reasonNode != null && messageNode != null
-                        ? messageNode.Value.Trim()
-                        : "";
+        //            test.StatusMessage +=
+        //                failureNode != null
+        //                    ? stackTraceNode != null
+        //                        ? stackTraceNode.Value.Trim()
+        //                        : ""
+        //                    : "";
 
-                    testSuite.TestList.Add(test);
-                });
+        //            test.StatusMessage += reasonNode != null && messageNode != null
+        //                ? messageNode.Value.Trim()
+        //                : "";
 
-                testSuite.Status = ReportUtil.GetFixtureStatus(testSuite.TestList);
+        //            testSuite.TestList.Add(test);
+        //        });
 
-                report.TestSuiteList.Add(testSuite);
-            });
+        //        testSuite.Status = ReportUtil.GetFixtureStatus(testSuite.TestList);
 
-            //Sort category list so it's in alphabetical order
-            report.CategoryList.Sort();
+        //        report.TestSuiteList.Add(testSuite);
+        //    });
 
-            return report;
-        }
+        //    //Sort category list so it's in alphabetical order
+        //    report.CategoryList.Sort();
+
+        //    return report;
+        //}
 
 
         /// <summary>
@@ -188,8 +189,10 @@ namespace ReportUnit.Parser
         /// <param name="elem">Element to obtain Run Info information from</param>
         /// <param name="report"></param>
         /// <returns>RunInfo for the file</returns>
-        public RunInfo CreateRunInfo(XElement elem, Report report)
+        public override RunInfo CreateRunInfo(XElement elem, Report report)
         {
+            //Console.Write("ELEMENT " + elem + "\n");
+
             if (elem.Attribute("environment") == null)
                 return null;
 

@@ -57,7 +57,7 @@
     <Compile Include="Parser\IParser.cs" />
     <Compile Include="Parser\Unit.cs" />
     <Compile Include="Parser\MSTest2010.cs" />
-    <Compile Include="Parser\NUnitV2.cs" />
+    <Compile Include="Parser\NUnit.cs" />
     <Compile Include="Parser\NUnitV1.cs" />
     <Compile Include="Parser\ParserFactory.cs" />
     <Compile Include="Model\Report.cs" />

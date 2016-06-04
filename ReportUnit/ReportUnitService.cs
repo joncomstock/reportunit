@@ -49,8 +49,7 @@ namespace ReportUnit
             	if (!(testRunner.Equals(TestRunner.Unknown)))
             	{
                     IParser parser = (IParser)Assembly.GetExecutingAssembly().CreateInstance(_ns + "." + Enum.GetName(typeof(TestRunner), testRunner));
-                    var report = parser.Parse(filePath.FullName);
-
+                    var report = parser.Parse(filePath.FullName, testRunner);
                     compositeTemplate.AddReport(report);
                 }
             }

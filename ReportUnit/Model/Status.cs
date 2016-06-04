@@ -1,4 +1,8 @@
-﻿namespace ReportUnit.Model
+﻿using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
+using ReportUnit.Parser;
+
+namespace ReportUnit.Model
 {
     public enum Status
     {
@@ -39,9 +43,10 @@
                 case "pass":
                 case "passed":
                 case "success":
+                case "true":
                     return Status.Passed;
 
-                case "warning":
+                case "warning": 
                 case "bad":
                 case "pending":
                 case "inconclusive":
@@ -53,6 +58,7 @@
                 case "fail":
                 case "failed":
                 case "failure":
+                case "false":
                 case "invalid":
                     return Status.Failed;
 
