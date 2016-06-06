@@ -75,9 +75,10 @@ namespace ReportUnit.Utils
         public const string RunDate = "run-date";
         public const string RunTime = "run-time";
         public const string ExceptionType = "exception-type";
+        public const string Trait = "trait";
 
         /// <summary>
-        /// This Dictionary contains the lookup string for any element you need.
+        /// This Dictionary contains the lookup string for any element you need.  Format is TestRunner + Lookup Category = Node Name
         /// </summary>
         public static Dictionary<Tuple<TestRunner, string>, string> NodeLookup = new Dictionary<Tuple<TestRunner, string>, string>
         {
@@ -94,6 +95,8 @@ namespace ReportUnit.Utils
            { new Tuple<TestRunner, string>(TestRunner.NUnit, Message), Message},
            { new Tuple<TestRunner, string>(TestRunner.NUnit, StackTrace), StackTrace},
            { new Tuple<TestRunner, string>(TestRunner.NUnit, Property), Property},
+           { new Tuple<TestRunner, string>(TestRunner.NUnit, Category), Category},
+           { new Tuple<TestRunner, string>(TestRunner.NUnit, Output), Output},
 
            /* NUnitV1 */
            { new Tuple<TestRunner, string>(TestRunner.NUnitV1, Root), TestResults },
@@ -107,6 +110,8 @@ namespace ReportUnit.Utils
            { new Tuple<TestRunner, string>(TestRunner.NUnitV1, Message), Message},
            { new Tuple<TestRunner, string>(TestRunner.NUnitV1, StackTrace), StackTrace},
            { new Tuple<TestRunner, string>(TestRunner.NUnitV1, Property), Property},
+           { new Tuple<TestRunner, string>(TestRunner.NUnitV1, Category), Property},
+           { new Tuple<TestRunner, string>(TestRunner.NUnitV1, Output), Output},
 
            /* XUnitV2 */
            { new Tuple<TestRunner, string>(TestRunner.XUnitV2, Root), Assemblies },
@@ -120,6 +125,8 @@ namespace ReportUnit.Utils
            { new Tuple<TestRunner, string>(TestRunner.XUnitV2, Message), Message},
            { new Tuple<TestRunner, string>(TestRunner.XUnitV2, StackTrace), StackTrace},
            { new Tuple<TestRunner, string>(TestRunner.XUnitV2, Property), Property},
+           { new Tuple<TestRunner, string>(TestRunner.XUnitV2, Category), Trait},
+           { new Tuple<TestRunner, string>(TestRunner.XUnitV2, Output), Output},
         };
 
         /// <summary>

@@ -78,7 +78,7 @@ namespace ReportUnit.Parser
         public TestSuite ProcessTestCases(Report report, XElement ts, TestSuite testSuite, TestRunner testRunner)
         {
             // get test suite level categories
-            var suiteCategories = GetCategories(ts, false);
+            var suiteCategories = GetCategories(ts, false, testRunner);
 
             // Test Cases report
             ts.Descendants(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.TestCase))).AsParallel().ToList().ForEach(tc =>
@@ -96,13 +96,13 @@ namespace ReportUnit.Parser
                 report.StatusList.Add(test.Status);
 
                 // TestCase Time Info
-                test = BuildTestCaseTimeInfo(test, tc);
+                test = BuildTestCaseTimeInfo(test, tc, testRunner);
 
                 // description
                 test = BuildTestCaseDescription(test, tc, testRunner);
 
                 // get test case level categories
-                var categories = GetCategories(tc, true);
+                var categories = GetCategories(tc, true, testRunner);
 
                 //Merge test level categories with suite level categories and add to test and report
                 categories.UnionWith(suiteCategories);
@@ -112,13 +112,12 @@ namespace ReportUnit.Parser
                 // error and other status messages
                 test = BuildTestCaseErrorLog(test, tc, testRunner);
 
-                // add NUnit console output to the status message
-                if (testRunner == TestRunner.NUnit || testRunner == TestRunner.NUnitV1)
-                {
-                    test.StatusMessage += tc.Element(ReportUtil.Output) != null
-                      ? tc.Element(ReportUtil.Output).Value.Trim()
-                      : "";
-                }
+                var statusMessage =
+                    tc.Element(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Output)));
+                // add NUnit console output to the status message -- can be modified if other types need to use this
+                test.StatusMessage += statusMessage != null
+                    ? statusMessage.Value.Trim()
+                    : "";
 
                 testSuite.TestList.Add(test);
             });
@@ -312,7 +311,7 @@ namespace ReportUnit.Parser
         /// <param name="elem">XElement to parse</param>
         /// <param name="allDescendents">If true, return all descendent categories.  If false, only direct children</param>
         /// <returns></returns>
-        public HashSet<string> GetCategories(XElement elem, bool allDescendents)
+        public HashSet<string> GetCategories(XElement elem, bool allDescendents, TestRunner testRunner)
         {
             //Define which function to use
             var parser = allDescendents
@@ -321,27 +320,43 @@ namespace ReportUnit.Parser
 
             //Grab unique categories
             HashSet<string> categories = new HashSet<string>();
-            bool hasCategories = parser(elem, ReportUtil.Categories).Any();
-            if (hasCategories)
+            List<XElement> cats = parser(elem, ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Category))).ToList();
+            if (cats.Any())
             {
-                List<XElement> cats = parser(elem, ReportUtil.Categories).Elements(ReportUtil.Category).ToList();
+                var attrCategories = cats.Where(x => x.Attribute(ReportUtil.Name).Value.Equals(ReportUtil.Category, StringComparison.CurrentCultureIgnoreCase));
 
-                cats.ForEach(x =>
+                Console.Write("attrCategories \n");
+                Console.Write(attrCategories.Any());
+
+
+                if (attrCategories.Any())
                 {
-                    string cat = x.Attribute(ReportUtil.Name).Value;
-                    categories.Add(cat);
-                });
+                    //Category is the name of the tag
+                    attrCategories.ToList().ForEach(x =>
+                    {
+                        categories.Add(x.Attribute(ReportUtil.Value).Value);
+
+                    });
+                }
+                else
+                {
+                    //Category is the XML tag
+                    cats.ForEach(x =>
+                    {
+                        categories.Add(x.Attribute(ReportUtil.Name).Value);
+                    });
+                }
             }
 
             // if this is a parameterized test, get the categories from the parent test-suite
             var parameterizedTestElement = elem
-                .Ancestors(ReportUtil.TestSuite).ToList()
+                .Ancestors(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.TestSuite))).ToList()
                 .Where(x => x.Attribute("type") != null && x.Attribute("type").Value.Equals("ParameterizedTest", StringComparison.CurrentCultureIgnoreCase))
                 .FirstOrDefault();
 
             if (null != parameterizedTestElement)
             {
-                var paramCategories = GetCategories(parameterizedTestElement, false);
+                var paramCategories = GetCategories(parameterizedTestElement, false, testRunner);
                 categories.UnionWith(paramCategories);
             }
 
@@ -376,7 +391,7 @@ namespace ReportUnit.Parser
         /// <param name="test"></param>
         /// <param name="tc"></param>
         /// <returns></returns>
-        public Test BuildTestCaseTimeInfo(Test test, XElement tc)
+        public Test BuildTestCaseTimeInfo(Test test, XElement tc, TestRunner testRunner)
         {
             test.StartTime =
                         tc.Attribute(ReportUtil.StartTime) != null
@@ -406,7 +421,7 @@ namespace ReportUnit.Parser
                         tc.Descendants(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Property)))
                         .Where(c => c.Attribute(ReportUtil.Name).Value.Equals(ReportUtil.Description, StringComparison.CurrentCultureIgnoreCase));
             test.Description =
-                description.Count() > 0
+                description.Any()
                     ? description.ToArray()[0].Attribute(ReportUtil.Value).Value
                     : "";
 
@@ -422,19 +437,27 @@ namespace ReportUnit.Parser
         /// <returns>Test with the Errors added if necessary</returns>
         public Test BuildTestCaseErrorLog(Test test, XElement tc, TestRunner testRunner)
         {
+            var failureElement =
+                tc.Element(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Failure)));
+                            
+            var reasonElement =
+                tc.Element(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Reason)));
+
             test.StatusMessage =
-                        tc.Element(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Failure))) != null
-                            ? tc.Element(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Failure))).Element(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Message))).Value.Trim()
+                        failureElement != null
+                            ? failureElement.Element(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Message))).Value.Trim()
                             : "";
             test.StatusMessage +=
-                tc.Element(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Failure))) != null
-                    ? tc.Element(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Failure))).Element(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.StackTrace))) != null
-                        ? tc.Element(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Failure))).Element(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.StackTrace))).Value.Trim()
+                failureElement != null
+                    ? failureElement.Element(
+                        ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.StackTrace))) != null
+                        ? failureElement.Element(
+                        ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.StackTrace))).Value.Trim()
                         : ""
                     : "";
 
-            test.StatusMessage += tc.Element(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Reason))) != null && tc.Element(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Reason))).Element(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Message))) != null
-                ? tc.Element(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Reason))).Element(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Message))).Value.Trim()
+            test.StatusMessage += reasonElement != null && reasonElement.Element(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Message))) != null
+                ? reasonElement.Element(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.Message))).Value.Trim()
                 : "";
 
             return test;
