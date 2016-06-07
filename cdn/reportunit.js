@@ -9,7 +9,7 @@ function showDynamicModal(heading, content) {
 
 $('.details-container').click(function(evt) {
     var t = $(evt.target);
-    
+
     if (t.is('.showStatusMessage') || t.is('i')) {
         if (t.is('i')) {
             t = t.parent();
@@ -39,12 +39,13 @@ $('.suite').click(function() {
     
     t.toggleClass('active');
     var html = t.find('.suite-content').html();
-    
-    $('.suite-name-displayed').text(t.find('.suite-name').text());
+    var suiteName = t.find('.suite-name').text();
+
+    $('.suite-name-displayed').text(suiteName).attr('title', suiteName);
     $('.details-container').append(html);
 });
 
-$('#slide-out .report-item > a').filter(function(){
+$('#nav-mobile .report-item > a').filter(function(){
     return this.href.match(/[^\/]+$/)[0] == document.location.pathname.match(/[^\/]+$/)[0];
 }).parent().addClass('active');
 
@@ -134,13 +135,13 @@ function clickListItem(listClass, index) {
 
 $(document).ready(function() {
 	/* init */
-	$('select').material_select();
-	$('.modal-trigger').leanModal();
+    $('select').material_select();
+    $('.modal-trigger').leanModal();    
 	$('.tooltipped').tooltip({delay: 10});
 
 	/* for a single report item, hide sidenav */
 	if ($('.report-item').length <= 1) {
-		$('#slide-out').addClass('hide');
+		$('#nav-mobile').addClass('hide');
 		
 		pinWidth = '56.5%';
 		
@@ -157,6 +158,8 @@ $(document).ready(function() {
 	
 	resetFilters();
 	$('.suite:first-child').click();
+    // Initialize collapse button
+	$(".button-collapse").sideNav();
 });
 
 var options = {

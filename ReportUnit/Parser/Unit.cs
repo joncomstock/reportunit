@@ -324,11 +324,6 @@ namespace ReportUnit.Parser
             if (cats.Any())
             {
                 var attrCategories = cats.Where(x => x.Attribute(ReportUtil.Name).Value.Equals(ReportUtil.Category, StringComparison.CurrentCultureIgnoreCase));
-
-                Console.Write("attrCategories \n");
-                Console.Write(attrCategories.Any());
-
-
                 if (attrCategories.Any())
                 {
                     //Category is the name of the tag
