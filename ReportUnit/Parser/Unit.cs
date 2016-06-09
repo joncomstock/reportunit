@@ -61,8 +61,9 @@ namespace ReportUnit.Parser
                 doc.Descendants(
                     ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.TestSuite)));
 
+            //Suite level elements that don't contain suite level elements will contain test case level elements
             var suites = testSuites
-                .Where(x => x.Descendants(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.TestCase))).Any());
+                .Where(x => x.Descendants(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.TestSuite))).Count() == 0);
 
             return suites;
         }

@@ -70,6 +70,8 @@ namespace ReportUnit.Model
 
         public string SideNavLinks { get; set; }
 
+        public string SideNav { get; set; }
+
         public Report()
         {
             TestSuiteList = new List<TestSuite>();

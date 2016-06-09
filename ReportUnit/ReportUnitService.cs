@@ -16,9 +16,10 @@ using ReportUnit.Parser;
 
 namespace ReportUnit
 {
-    class ReportUnitService
+    public class ReportUnitService
     {
         private const string _ns = "ReportUnit.Parser";
+        public const string SummaryTitle = "Summary";
         private Logger _logger = Logger.GetLogger();
 
         public ReportUnitService() { }
@@ -56,17 +57,21 @@ namespace ReportUnit
 
             if (compositeTemplate.ReportList.Count > 1)
             {
+                compositeTemplate.Title = SummaryTitle;
                 compositeTemplate.SideNavLinks = compositeTemplate.SideNavLinks.Insert(0, Templates.SideNav.IndexLink);
+                compositeTemplate.SideNav = Engine.Razor.RunCompile(compositeTemplate.SideNavHtml, "sidenavhtml", typeof(CompositeTemplate), compositeTemplate, null);
 
-                string summary = Engine.Razor.RunCompile(Templates.Summary.GetSource(), "summary", typeof(Model.CompositeTemplate), compositeTemplate, null);
+                string summary = Engine.Razor.RunCompile(Templates.Summary.GetSource(), "summary", typeof(CompositeTemplate), compositeTemplate, null);
                 File.WriteAllText(Path.Combine(outputDirectory, "Index.html"), summary);
-            }
+            }            
 
 			foreach (var report in compositeTemplate.ReportList)
-            {
+			{
+                compositeTemplate.Title = report.FileName;
                 report.SideNavLinks = compositeTemplate.SideNavLinks;
+			    report.SideNav = Engine.Razor.RunCompile(compositeTemplate.SideNavHtml, "sidenavhtml", typeof(CompositeTemplate), compositeTemplate, null);
 
-                var html = Engine.Razor.RunCompile(Templates.File.GetSource(), "report", typeof(Model.Report), report, null);
+                var html = Engine.Razor.RunCompile(Templates.File.GetSource(), "report", typeof(Report), report, null);
                 File.WriteAllText(Path.Combine(outputDirectory, report.FileName + ".html"), html);
             }
         }

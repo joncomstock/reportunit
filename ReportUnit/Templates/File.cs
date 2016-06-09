@@ -33,49 +33,18 @@ namespace ReportUnit.Templates
                     <meta name='author' content=''>
                     <title>ReportUnit TestRunner Report</title>
                     <link href='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.2/css/materialize.min.css' rel='stylesheet' type='text/css'>
-                    <link href='https://cdn.rawgit.com/reportunit/reportunit/35df38c6ab8b35526c22b920e24993ecc9357c2a/cdn/reportunit.css' type='text/css' rel='stylesheet' />
                     <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>
+                    <!--<link href='https://cdn.rawgit.com/reportunit/reportunit/35df38c6ab8b35526c22b920e24993ecc9357c2a/cdn/reportunit.css' type='text/css' rel='stylesheet' />-->
+                    <!--<link href='https://cdn.rawgit.com/joncomstock/reportunit/master/cdn/reportunit.css' type='text/css' rel='stylesheet' />-->
+                    <link href='https://rawgit.com/joncomstock/reportunit/master/cdn/reportunit.css' type='text/css' rel='stylesheet' />
+                    <!--<link href='reportunit.css' type='text/css' rel='stylesheet' />-->
                     
                 </head>
                 <body>
-                    <!--<div class='header'>-->
-                    <header>
-                        <nav class='top-nav'>         
-                            <div class='nav-wrapper'>
-                                <a class='page-title'>@Model.FileName</a>
-                            </div>
-                            <!--<span class='file-name'>@Model.FileName</span>-->
-                        </nav>
-                        <a href='#' data-activates='nav-mobile' class='button-collapse top-nav hide-on-large-only'>
-                            <i class='material-icons'>menu</i>
-                        </a>
-                        <ul id='nav-mobile' class='side-nav fixed'>
-                            <li class='logo'>
-                                <a id='logo-container' href='#' class='brand-logo'><span>ReportUnit</span></a>
-                            </li>
-                            @Model.SideNavLinks
-                        </ul>
-                            <!--<ul class='left'>
-                                <li class='logo'>
-                                    <a href='http://reportunit.relevantcodes.com/'><span>ReportUnit</span></a>
-                                </li>
-                            </ul>-->
-
-                            <!--<ul class='right nav-right'>
-                                <li class='nav-item'>
-                                    <a class='modal-trigger waves-effect waves-light run-info-icon tooltipped' data-position='bottom' data-tooltip='Run Info' href='#modal1'><i class='mdi-action-info-outline'></i></a>
-                                </li>
-                                <div class='nav-item'>
-                                    <a class='modal-trigger waves-effect waves-light console-logs-icon tooltipped' data-position='bottom' data-tooltip='Console Logs' href='#modal2'><i class='mdi-action-assignment'></i></a>
-                                </div>
-                                <li class='nav-item'>
-                                    v1.50.0
-                                </li>
-                            </ul>-->
-                    </header>
+                    @Model.SideNav
                     <main>
-                        <div class='row'> 
-                            <div id='main-content' class='col s12'>
+                        <!--<div class='row'> 
+                            <div class='col s12'>-->
                                 @if (Model.Total == 0)
                                 {
                                     <div class='row no-tests'>
@@ -140,8 +109,8 @@ namespace ReportUnit.Templates
                                     <div class='row'>
                                         <div id='suites' class='suites'>
                                             <div class='col s12 m4 l6'>
-                                                <div class='card-panel no-padding suite-list v-spacer'>
-                                                    <div class='filters card-panel'>
+                                                <div class='card-panel no-padding suite-list'>
+                                                    <div class='filters'>
                                                         <div>
                                                             <a class='dropdown-button button' href='#' data-hover='true' data-beloworigin='true' data-constrainwidth='true' data-activates='suite-toggle' alt='Filter suites' title='Filter suites'><i class='mdi-file-folder-open icon'></i></a><ul class='dropdown-content' id='suite-toggle'> 
                                                             <ul>
@@ -195,7 +164,7 @@ namespace ReportUnit.Templates
                                                                             @Model.TestSuiteList[ix].Name
                                                                         </span>
                                                                     </div>
-                                                                    <div class='suite-result center-child valign-wrapper'>
+                                                                    <div class='suite-result @Model.TestSuiteList[ix].Status.ToString().ToLower() center-child valign-wrapper'>
                                                                         <span class='label valign center @Model.TestSuiteList[ix].Status.ToString().ToLower()'>
                                                                             @Model.TestSuiteList[ix].Status.ToString()
                                                                         </span>
@@ -224,7 +193,7 @@ namespace ReportUnit.Templates
                                                                                 <th class='no-break center'>Status</th>
                                                                                 @if (Model.TestSuiteList.Count > 0 && Model.TestSuiteList[ix].TestList.Any(x => x.CategoryList.Count > 0))
                                                                                 {
-                                                                                    <th class='no-break'>Category</th>
+                                                                                    <th class='no-break center'>Category</th>
                                                                                 }
                                                                                 @if (Model.TestSuiteList.Count > 0 && Model.TestSuiteList[ix].TestList.Where(x => !String.IsNullOrEmpty(x.Description) || !String.IsNullOrEmpty(x.StatusMessage)).Count() > 0) 
                                                                                 {
@@ -259,7 +228,9 @@ namespace ReportUnit.Templates
                                                                                                 <div class='category-list center'>
                                                                                                     @foreach (var cat in test.CategoryList)
                                                                                                     {
-                                                                                                        <div class='label category center'>@cat</div>
+                                                                                                        <div>
+                                                                                                            <span class='label category center'>@cat</span>
+                                                                                                        </div>
                                                                                                     }
                                                                                                 </div>
                                                                                             }
@@ -271,7 +242,7 @@ namespace ReportUnit.Templates
                                                                                         {
                                                                                             <td class='center'>
                                                                                     
-                                                                                                <div class='badge center showStatusMessage error'><i class='mdi-alert-warning'></i></div>
+                                                                                                <div class='badge center showStatusMessage error modal-trigger'><i class='mdi-alert-warning'></i></div>
                                                                                                 <pre class='hide'>@test.StatusMessage.Replace(""<"", ""&lt;"").Replace("">"", ""&gt;"")</pre>
                                                                                             </td>
                                                                                         }
@@ -300,20 +271,21 @@ namespace ReportUnit.Templates
                                         </div>
                                     </div>
                                 }
-                            </div>                                                        
-                        </div>
-                        <div id='modal1' class='modal'>
+                            <!--</div>                                                        
+                        </div>-->
+                        <div id='modal1' class='modal modal-fixed-footer'>
                             <div class='modal-content'>
-                                <h4><!--%FILENAME%--> RunInfo</h4>
+                                <h4><!--%FILENAME%--> Run Info</h4>
                                 <table class='bordered responsive-table'>
                                     <thead>
                                         <tr>
-                                            <th>Param</th><th>Value</th>
+                                            <th class='no-break'>Param</th>
+                                            <th>Value</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>    
-                                            <td>TestRunner</td>
+                                            <td class='no-break'>TestRunner</td>
                                             <td>@Model.TestRunner.ToString()</td>
                                         </tr>
                                         @if (Model.RunInfo != null)
@@ -321,7 +293,7 @@ namespace ReportUnit.Templates
                                             foreach (var key in Model.RunInfo.Keys)
                                             {
                                                 <tr>
-                                                    <td>@key</td>
+                                                    <td class='no-break'>@key</td>
                                                     <td>@Model.RunInfo[key]</td>
                                                 </tr>
                                             }
@@ -339,10 +311,13 @@ namespace ReportUnit.Templates
                             <div class='hidden total-errors'><!--%ERRORS%--></div>
                             <div class='hidden total-skipped'><!--%SKIPPED%--></div>
                         </div>
-                        <div id='dynamicModal' class='modal modal-trigger' in_duration='0' induration='0'>
+                        <div id='dynamicModal' class='modal modal-fixed-footer'>
                             <div class='modal-content'>
                                 <h4></h4>
                                 <pre></pre>
+                            </div>
+                            <div class='modal-footer'>
+                                <a href='#!' class='modal-action modal-close waves-effect waves-green btn-flat'>Close</a>                                                                    
                             </div>
                         </div>
                     </main>
@@ -350,7 +325,10 @@ namespace ReportUnit.Templates
                 <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js'></script> 
                 <script src='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.2/js/materialize.min.js'></script> 
                 <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
-                <script src='https://cdn.rawgit.com/reportunit/reportunit/35df38c6ab8b35526c22b920e24993ecc9357c2a/cdn/reportunit.js' type='text/javascript'></script>
+                <!--<script src='https://cdn.rawgit.com/reportunit/reportunit/35df38c6ab8b35526c22b920e24993ecc9357c2a/cdn/reportunit.js' type='text/javascript'></script>-->
+                <!--<script scr='https://cdn.rawgit.com/joncomstock/reportunit/master/cdn/reportunit.js' type='text/javascript'></script>-->
+                <script src='https://rawgit.com/joncomstock/reportunit/master/cdn/reportunit.js' type='text/javascript'></script>
+                <!--<script src='reportunit.js' type = 'text/javascript'></script>-->
 
             </html>
             ".Replace("\r\n", "").Replace("\t", "").Replace("    ", ""); 
