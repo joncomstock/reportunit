@@ -156,5 +156,10 @@ namespace ReportUnit.Utils
 
             return Status.Unknown;
         }
+
+        public static string FormatTemplate(string source)
+        {
+            return source.Replace("\r\n", "").Replace("\t", "").Replace("    ", "");
+        }
     }
 }

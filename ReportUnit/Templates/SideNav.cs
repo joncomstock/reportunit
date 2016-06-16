@@ -1,4 +1,6 @@
-﻿namespace ReportUnit.Templates
+﻿using ReportUnit.Utils;
+
+namespace ReportUnit.Templates
 {
     public class SideNav
     {
@@ -6,25 +8,24 @@
         {
             get
             {
-                return @"<li class='waves-effect report-item'>
+                return ReportUtil.FormatTemplate(@"<li class='waves-effect report-item'>
 	                    <a href='./@(Model.FileName).html'>
-		                    <i class='mdi-action-assignment'></i>
+		                    <i class='mdi-file-folder-open'></i>
 		                    <span class='sidenav-filename'>@Model.FileName</span>
 	                    </a>
-                    </li>".Replace("\r\n", "").Replace("\t", "").Replace("    ", "");
+                    </li>");
             }
         }
 
         public static string IndexLink
         {
-            get
-            {
-                return @"<li class='waves-effect report-item'>
+            get {
+                return ReportUtil.FormatTemplate(@"<li class='waves-effect report-item'>
 	                    <a href='./Index.html'>
-		                    <i class='mdi-action-assignment'></i>
+		                    <i class='mdi-action-dashboard'></i>
 		                    <span class='sidenav-filename'>Index</span>
 	                    </a>
-                    </li>".Replace("\r\n", "").Replace("\t", "").Replace("    ", "");
+                    </li>");
             }
         }
     }

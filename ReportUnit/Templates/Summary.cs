@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ReportUnit.Model;
+using ReportUnit.Utils;
 
 namespace ReportUnit.Templates
 {
-    internal class Summary
+    internal class Summary : CompositeTemplate
     {
         public static string GetSource()
         {
-            return @"
+            return ReportUtil.FormatTemplate(@"
                 <!DOCTYPE html>
                 <html lang='en'>
                 <!--
@@ -22,21 +24,8 @@ namespace ReportUnit.Templates
 		                Copyright (c) 2015, Anshoo Arora (Relevant Codes) | Copyrights licensed under the New BSD License | http://opensource.org/licenses/BSD-3-Clause
 		                Documentation: http://extentreports.relevantcodes.com 
                 -->
-                " +
-                @"<head>
-	                <meta charset='utf-8'>
-	                <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-	                <meta name='viewport' content='width=device-width, initial-scale=1'>
-	                <meta name='description' content=''>
-	                <meta name='author' content=''>
-	                <title>ReportUnit TestRunner Report</title>
-	                <link href='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.2/css/materialize.min.css' rel='stylesheet' type='text/css'>
-	                <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
-	                <!--<link href='https://cdn.rawgit.com/reportunit/reportunit/005dcf934c5a53e60b9ec88a2a118930b433c453/cdn/reportunit.css' type='text/css' rel='stylesheet' />-->
-                    <!--<link href='https://cdn.rawgit.com/joncomstock/reportunit/master/cdn/reportunit.css' type='text/css' rel='stylesheet' />-->
-                    <link href='https://rawgit.com/joncomstock/reportunit/master/cdn/reportunit.css' type='text/css' rel='stylesheet' />
-                    <!--<link href='reportunit.css' type='text/css' rel='stylesheet' />-->
-                    
+                <head>
+                    @Model.HeadHtml
                 </head>
                 <body class='summary'>    
 	                @Model.SideNav
@@ -212,16 +201,10 @@ namespace ReportUnit.Templates
 		                </div>
 	                </div>
                 </body>
-                <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js'></script> 
-                <script src='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.2/js/materialize.min.js'></script> 
-                <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
-                <!--<script src='https://cdn.rawgit.com/reportunit/reportunit/005dcf934c5a53e60b9ec88a2a118930b433c453/cdn/reportunit.js' type='text/javascript'></script>-->
-                <!--<script scr='https://cdn.rawgit.com/joncomstock/reportunit/master/cdn/reportunit.js' type='text/javascript'></script>-->
-                <script src='https://rawgit.com/joncomstock/reportunit/master/cdn/reportunit.js' type='text/javascript'></script>
-                <!--<script src='reportunit.js' type = 'text/javascript'></script>-->
+                @Model.ScriptFooterHtml
                 
             </html>
-            ".Replace("\r\n", "").Replace("\t", "").Replace("    ", ""); ;
+            ");
         }
     }
 }

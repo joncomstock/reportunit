@@ -59,9 +59,11 @@ namespace ReportUnit
             {
                 compositeTemplate.Title = SummaryTitle;
                 compositeTemplate.SideNavLinks = compositeTemplate.SideNavLinks.Insert(0, Templates.SideNav.IndexLink);
-                compositeTemplate.SideNav = Engine.Razor.RunCompile(compositeTemplate.SideNavHtml, "sidenavhtml", typeof(CompositeTemplate), compositeTemplate, null);
+                compositeTemplate.SideNav = Engine.Razor.RunCompile(compositeTemplate.SideNavHtml, "sidenavhtml", 
+                    typeof(CompositeTemplate), compositeTemplate, null);
 
-                string summary = Engine.Razor.RunCompile(Templates.Summary.GetSource(), "summary", typeof(CompositeTemplate), compositeTemplate, null);
+                string summary = Engine.Razor.RunCompile(Templates.Summary.GetSource(), "summary", 
+                    typeof(CompositeTemplate), compositeTemplate, null);
                 File.WriteAllText(Path.Combine(outputDirectory, "Index.html"), summary);
             }            
 
@@ -69,9 +71,13 @@ namespace ReportUnit
 			{
                 compositeTemplate.Title = report.FileName;
                 report.SideNavLinks = compositeTemplate.SideNavLinks;
-			    report.SideNav = Engine.Razor.RunCompile(compositeTemplate.SideNavHtml, "sidenavhtml", typeof(CompositeTemplate), compositeTemplate, null);
+			    report.SideNav = Engine.Razor.RunCompile(compositeTemplate.SideNavHtml, "reportsidenav", 
+                    typeof(CompositeTemplate), compositeTemplate, null);
 
-                var html = Engine.Razor.RunCompile(Templates.File.GetSource(), "report", typeof(Report), report, null);
+			    report.Head = compositeTemplate.HeadHtml;
+			    report.ScriptFooter = compositeTemplate.ScriptFooterHtml;
+
+                var html = Engine.Razor.RunCompile(Templates.File.GetSource(compositeTemplate.ReportList), "report", typeof(Report), report, null);
                 File.WriteAllText(Path.Combine(outputDirectory, report.FileName + ".html"), html);
             }
         }

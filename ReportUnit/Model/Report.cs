@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 using ReportUnit.Parser;
+using ReportUnit.Utils;
 
 namespace ReportUnit.Model
 {
@@ -72,11 +73,16 @@ namespace ReportUnit.Model
 
         public string SideNav { get; set; }
 
+        public string Head { get; set; }
+
+        public string ScriptFooter { get; set; }
+
         public Report()
         {
             TestSuiteList = new List<TestSuite>();
             CategoryList = new List<string>();
             StatusList = new List<Status>();
         }
+
     }
 }

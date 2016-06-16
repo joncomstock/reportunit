@@ -7,6 +7,7 @@ using System.Text;
 using RazorEngine;
 using RazorEngine.Templating;
 using RazorEngine.Text;
+using ReportUnit.Utils;
 
 namespace ReportUnit.Model
 {
@@ -42,25 +43,47 @@ namespace ReportUnit.Model
         {
             get
             {
-                var sideNavHtml = @"
-                    <header>
+                var navClass = string.Format("side-nav fixed{0}", (ReportList.Count <= 1 ? " hide" : ""));
+                var className = "";
+                var toolTip = "";
+                var href = "";
+                var iClass = "";
+
+                if (Title == ReportUnitService.SummaryTitle)
+                {
+                    className = "console-logs-icon";
+                    toolTip = "Console Logs";
+                    href = "modal2";
+                    iClass = "assignment";
+                }
+                else
+                {
+                    className = "run-info-icon";
+                    toolTip = "Run Info";
+                    href = "modal1";
+                    iClass = "info";
+                }
+                var listItem = string.Format(@"
+                    <li class='nav-item'>
+                        <a class='modal-trigger waves-effect waves-light {0} tooltipped' data-position='bottom' data-tooltip='{1}' href='#{2}'><i class='material-icons'>{3}</i></a>
+                    </li>
+                ", className, toolTip, href, iClass);
+
+                var headerHtml = "<header>";
+                if (ReportList.Count <= 1)
+                {
+                    headerHtml = "<header class='single-report'>";
+                }
+
+                var sideNavHtml = ReportUtil.FormatTemplate(string.Format(@"
+                    {2}
                         <nav class='top-nav'>         
                             <div class='nav-wrapper'>
                                 <a class='page-title'>
                                     @Model.Title
                                 </a>
                                 <ul class='right nav-right'>
-                                    @if(Model.Title == ReportUnit.ReportUnitService.SummaryTitle)
-                                    {
-                                        <li class='nav-item'>
-                                            <a class='modal-trigger waves-effect waves-light console-logs-icon tooltipped' data-position='bottom' data-tooltip='Console Logs' href='#modal2'><i class='mdi-action-assignment'></i></a>
-                                        </li>
-                                    }
-                                    else{
-                                        <li class='nav-item'>
-                                            <a class='modal-trigger waves-effect waves-light run-info-icon tooltipped' data-position='bottom' data-tooltip='Run Info' href='#modal1'><i class='mdi-action-info-outline'></i></a>
-                                        </li>
-                                    }
+                                    {0}
                                     <li class='nav-item'>
                                         v1.50.0
                                     </li>
@@ -70,18 +93,56 @@ namespace ReportUnit.Model
                         <a href='#' data-activates='nav-mobile' class='button-collapse top-nav hide-on-large-only'>
                             <i class='material-icons'>menu</i>
                         </a>
-                        <ul id='nav-mobile' class='side-nav fixed'>
+                        <ul id='nav-mobile' class='{1}'>
                             <li class='logo'>
                                 <a id='logo-container' href='#' class='brand-logo'><span>ReportUnit</span></a>
                             </li>
                             @Model.SideNavLinks
-                        </ul>                                                       
-                    </header>".Replace("\r\n", "").Replace("\t", "").Replace("    ", "");
+                        </ul>                                                                                                                                    
+                    </header>", listItem, navClass, headerHtml));
 
                 return sideNavHtml;
             }
-        }
+        }        
 
         public string SideNav { get; internal set; }
+
+        public string HeadHtml
+        {
+            get
+            {
+                var headHtml = ReportUtil.FormatTemplate(@"
+	                <meta charset='utf-8'>
+	                <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	                <meta name='viewport' content='width=device-width, initial-scale=1'>
+	                <meta name='description' content=''>
+	                <meta name='author' content=''>
+	                <title>ReportUnit TestRunner Report</title>
+	                <link href='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.2/css/materialize.min.css' rel='stylesheet' type='text/css'>
+	                <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
+                    <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>
+	                <!--<link href='https://cdn.rawgit.com/reportunit/reportunit/005dcf934c5a53e60b9ec88a2a118930b433c453/cdn/reportunit.css' type='text/css' rel='stylesheet' />-->
+                    <!--<link href='https://cdn.rawgit.com/joncomstock/reportunit/master/cdn/reportunit.css' type='text/css' rel='stylesheet' />-->
+                    <!--<link href='https://rawgit.com/joncomstock/reportunit/master/cdn/reportunit.css' type='text/css' rel='stylesheet' />-->
+                    <link href='reportunit.css' type='text/css' rel='stylesheet' />");
+
+                return headHtml;
+            }
+        }
+
+        public string ScriptFooterHtml
+        {
+            get {
+                return ReportUtil.FormatTemplate(@"
+                    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js'></script> 
+                    <script src='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.2/js/materialize.min.js'></script> 
+                    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
+                    <!--<script src='https://cdn.rawgit.com/reportunit/reportunit/35df38c6ab8b35526c22b920e24993ecc9357c2a/cdn/reportunit.js' type='text/javascript'></script>-->
+                    <!--<script scr='https://cdn.rawgit.com/joncomstock/reportunit/master/cdn/reportunit.js' type='text/javascript'></script>-->
+                    <!--<script src='https://rawgit.com/joncomstock/reportunit/master/cdn/reportunit.js' type='text/javascript'></script>-->
+                    <script src='reportunit.js' type = 'text/javascript'></script>
+                ");
+            }
+        }
     }
 }
