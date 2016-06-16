@@ -186,11 +186,18 @@ namespace ReportUnit.Parser
         public Report InitReport(XElement elem, Report report, TestRunner testRunner)
         {
             report.FileName = Path.GetFileNameWithoutExtension(resultsFile);
-            report.AssemblyName = elem != null ? elem.Value : null;
+            report.AssemblyName = GetAssemblyName(elem, testRunner);
             report.TestRunner = testRunner;
 
             return report;
         }
+
+        /// <summary>
+        /// The assembly name will be different per XML, so retreive the appropriate one per type.
+        /// </summary>
+        /// <param name="elem">XElement to retrieve Assembly name from</param>
+        /// <returns>The Assembly Name as a string</returns>
+        public abstract string GetAssemblyName(XElement elem, TestRunner testRunner);
 
         /// <summary>
         /// Add RunInfo to the Report based off of your type of TestRunner. Each type that inherits from this

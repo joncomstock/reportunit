@@ -27,5 +27,28 @@ namespace ReportUnit.Parser
 
             return runInfo;
         }
+
+        /// <summary>
+        /// The assembly name will be different per XML, so retreive the appropriate one per type.
+        /// </summary>
+        /// <param name="elem">XElement to retrieve Assembly name from</param>
+        /// <returns>The Assembly Name as a string</returns>
+        public override string GetAssemblyName(XElement elem, TestRunner testRunner)
+        {
+            string assembly = "";
+
+            if (elem != null)
+            {
+                var node = elem.Descendants(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.TestSuite)))
+                .FirstOrDefault(x => (x.Attribute(ReportUtil.Type) != null && x.Attribute("type").Value.Equals(ReportUtil.Assembly, StringComparison.CurrentCultureIgnoreCase)));
+
+                if (node != null && node.Attribute(ReportUtil.Name) != null)
+                {
+                    assembly = node.Attribute(ReportUtil.Name).Value;
+                }
+            }
+
+            return assembly;
+        }
     }
 }

@@ -77,7 +77,7 @@ namespace ReportUnit.Model
 
                 var sideNavHtml = ReportUtil.FormatTemplate(string.Format(@"
                     {2}
-                        <nav class='top-nav'>         
+                        <nav class='top-nav fixed'>         
                             <div class='nav-wrapper'>
                                 <a class='page-title'>
                                     @Model.Title
