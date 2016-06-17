@@ -34,7 +34,7 @@ namespace ReportUnit.Parser
                 testSuite.Name = ts.Attribute(ReportUtil.Name).Value;
 
                 // Suite Time Info
-                testSuite = BuildTestSuiteTimeInfo(doc, testSuite, ts);
+                testSuite = (TestSuite) ReportUtil.BuildTimeInfo(testSuite, ts);
 
                 // any error messages and/or stack-trace
                 testSuite = BuildTestSuiteErrorLog(testSuite, ts, testRunner);
@@ -97,12 +97,12 @@ namespace ReportUnit.Parser
                 report.StatusList.Add(test.Status);
 
                 // TestCase Time Info
-                test = BuildTestCaseTimeInfo(test, tc, testRunner);
+                test = (Test) ReportUtil.BuildTimeInfo(test, tc);
 
                 // description
                 test = BuildTestCaseDescription(test, tc, testRunner);
 
-                // get test case level categories
+                // get test case level categoriesB
                 var categories = GetCategories(tc, true, testRunner);
 
                 //Merge test level categories with suite level categories and add to test and report
@@ -161,7 +161,7 @@ namespace ReportUnit.Parser
             report = BuildReportCounts(doc.Root, rootElem, countNode, report, testRunner);
 
             // report duration
-            report = BuildReportDuration(rootElem, report);
+            report = (Report) ReportUtil.BuildTimeInfo(report, rootElem);
 
             // report status messages
             var testSuiteTypeAssembly = doc.Descendants(ReportUtil.GetTestRunnerNode(new Tuple<TestRunner, string>(testRunner, ReportUtil.TestSuite)))
@@ -256,30 +256,6 @@ namespace ReportUnit.Parser
         }
 
         /// <summary>
-        /// Add the timing info for the entire Report.
-        /// </summary>
-        /// <param name="root">Element that contains the timing data</param>
-        /// <param name="report">Report to add the timing data to</param>
-        /// <returns>Report with timing data added</returns>
-        public Report BuildReportDuration(XElement root, Report report)
-        {
-            // report duration
-            report.StartTime =
-                root.Attribute(ReportUtil.StartTime) != null
-                    ? root.Attribute(ReportUtil.StartTime).Value
-                    : (root.Attribute(ReportUtil.Date) != null && root.Attribute(ReportUtil.Time) != null) 
-                        ? (root.Attribute(ReportUtil.Date).Value + " " + root.Attribute(ReportUtil.Time).Value) 
-                        : "";
-
-            report.EndTime =
-                root.Attribute(ReportUtil.EndTime) != null
-                    ? root.Attribute(ReportUtil.EndTime).Value
-                    : "";
-
-            return report;
-        }
-
-        /// <summary>
         /// Add status messages to the Report.
         /// </summary>
         /// <param name="elem">Element that contains the Status Message data</param>
@@ -291,26 +267,6 @@ namespace ReportUnit.Parser
             report.StatusMessage = elem != null ? elem.Value : "";
 
             return report;
-        }
-
-        public virtual TestSuite BuildTestSuiteTimeInfo(XDocument doc, TestSuite testSuite, XElement ts)
-        {
-            testSuite.StartTime =
-                    ts.Attribute(ReportUtil.StartTime) != null
-                        ? ts.Attribute(ReportUtil.StartTime).Value
-                        : string.Empty;
-
-            testSuite.StartTime =
-                String.IsNullOrEmpty(testSuite.StartTime) && ts.Attribute(ReportUtil.Time) != null
-                    ? ts.Attribute(ReportUtil.Time).Value
-                    : testSuite.StartTime;
-
-            testSuite.EndTime =
-                ts.Attribute(ReportUtil.EndTime) != null
-                    ? ts.Attribute(ReportUtil.EndTime).Value
-                    : "";
-
-            return testSuite;
         }
 
         /// <summary>
@@ -386,30 +342,6 @@ namespace ReportUnit.Parser
             }
 
             return testSuite;
-        }
-
-        /// <summary>
-        /// Add the timing data 
-        /// </summary>
-        /// <param name="test"></param>
-        /// <param name="tc"></param>
-        /// <returns></returns>
-        public Test BuildTestCaseTimeInfo(Test test, XElement tc, TestRunner testRunner)
-        {
-            test.StartTime =
-                        tc.Attribute(ReportUtil.StartTime) != null
-                            ? tc.Attribute(ReportUtil.StartTime).Value
-                            : "";
-            test.StartTime =
-                String.IsNullOrEmpty(test.StartTime) && (tc.Attribute(ReportUtil.Time) != null)
-                    ? tc.Attribute(ReportUtil.Time).Value
-                    : test.StartTime;
-            test.EndTime =
-                tc.Attribute(ReportUtil.EndTime) != null
-                    ? tc.Attribute(ReportUtil.EndTime).Value
-                    : "";
-
-            return test;
         }
 
         /// <summary>

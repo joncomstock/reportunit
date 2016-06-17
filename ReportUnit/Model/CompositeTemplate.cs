@@ -61,7 +61,7 @@ namespace ReportUnit.Model
                     className = "run-info-icon";
                     toolTip = "Run Info";
                     href = "modal1";
-                    iClass = "info";
+                    iClass = "info_outline";
                 }
                 var listItem = string.Format(@"
                     <li class='nav-item'>

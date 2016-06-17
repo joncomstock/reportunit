@@ -189,11 +189,23 @@ namespace ReportUnit.Templates
                                                                 <i class='material-icons icon'>chevron_right</i>
                                                             </td>
                                                             <td class='suite-content hide'>
-                                                                <span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>@Model.TestSuiteList[ix].StartTime</span>
+                                                                <div>
+                                                                    @if (!String.IsNullOrEmpty(@Model.TestSuiteList[ix].StartTime))
+                                                                    {{
+                                                                        <span>Suite Start Time: </span>
+                                                                        <span alt='Suite started at time' title='Suite started at time' class='startedAt label green lighten-2 text-white'>@Model.TestSuiteList[ix].StartTime</span>
+                                                                    }}                                                                    
                                                                     @if (!String.IsNullOrEmpty(@Model.TestSuiteList[ix].EndTime))
                                                                     {{
-                                                                        <span alt='Suite ended at time' title='Suite ended at time' class='endedAt label label red lighten-2 text-white'>@Model.TestSuiteList[ix].EndTime</span>
+                                                                        <span>Suite End Time: </span>
+                                                                        <span alt='Suite ended at time' title='Suite ended at time' class='endedAt label red lighten-2 text-white'>@Model.TestSuiteList[ix].EndTime</span>
                                                                     }}
+                                                                    @if (!String.IsNullOrEmpty(@Model.TestSuiteList[ix].TotalTime))
+                                                                    {{
+                                                                        <span>Suite Total Time: </span>
+                                                                        <span alt='Suite total time' title='Suite total time' class='totalTime label blue lighten-2 text-white'>@Model.TestSuiteList[ix].TotalTime</span>
+                                                                    }}
+                                                                </div>
                                                                 <div class='fixture-status-message'>
                                                                     @if (!String.IsNullOrEmpty(@Model.TestSuiteList[ix].Description)) 
                                                                     {{
@@ -217,6 +229,7 @@ namespace ReportUnit.Templates
                                                                             {{
                                                                                 <th class='no-break center'>Status <br /> Message</th>
                                                                             }}
+                                                                            <th class='no-break center'>Time</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -269,6 +282,18 @@ namespace ReportUnit.Templates
                                                                                         <td class=''></td>
                                                                                     }}
                                                                                 }}
+                                                                                <td class='center'>
+                                                                                    @if(!String.IsNullOrEmpty(test.TotalTime))
+                                                                                    {{
+                                                                                        <span alt='Test total time' title='Test total time' class='label blue lighten-2 text-white'>
+                                                                                            @test.TotalTime
+                                                                                        </span>
+                                                                                    }}
+                                                                                    else
+                                                                                    {{
+                                                                                        <span>--</span>
+                                                                                    }}
+                                                                                </td>
                                                                                 <td class='test-features filter-categories hide @test.GetCategories() @test.Status.ToString().ToLower()'></td>
                                                                             </tr>
                                                                         }}

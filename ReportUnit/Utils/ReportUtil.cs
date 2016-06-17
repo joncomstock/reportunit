@@ -161,5 +161,27 @@ namespace ReportUnit.Utils
         {
             return source.Replace("\r\n", "").Replace("\t", "").Replace("    ", "");
         }
+
+        public static ReportOutput BuildTimeInfo(ReportOutput reportElem, XElement ts)
+        {
+            reportElem.StartTime =
+                    ts.Attribute(ReportUtil.StartTime) != null
+                        ? ts.Attribute(ReportUtil.StartTime).Value
+                        : string.Empty;
+
+            reportElem.EndTime =
+                ts.Attribute(ReportUtil.EndTime) != null
+                    ? ts.Attribute(ReportUtil.EndTime).Value
+                    : "";
+
+            reportElem.TotalTime =
+                ts.Attribute(ReportUtil.Time) != null
+                    ? ts.Attribute(ReportUtil.Time).Value
+                    : (ts.Attribute(ReportUtil.StartTime) != null && ts.Attribute(ReportUtil.EndTime) != null)
+                        ? (int.Parse(ts.Attribute(ReportUtil.StartTime).Value) - int.Parse(ts.Attribute(ReportUtil.EndTime).Value)).ToString()
+                        : "";
+
+            return reportElem;
+        }
     }
 }

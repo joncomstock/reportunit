@@ -8,22 +8,13 @@ using ReportUnit.Utils;
 
 namespace ReportUnit.Model
 {
-    public class Report
+    public class Report : ReportOutput
     {
         public List<Status> StatusList;
 
         public List<string> CategoryList;
 
         public List<TestSuite> TestSuiteList { get; set; }
-
-        public string StartTime { get; set; }
-
-        public string EndTime { get; set; }
-
-        /// <summary>
-        /// Error or other status messages
-        /// </summary>
-        public string StatusMessage { get; set; }
 
         /// <summary>
         /// File name generated that this data is for
@@ -43,16 +34,6 @@ namespace ReportUnit.Model
         /// Name of the assembly that the tests are for
         /// </summary>
         public string AssemblyName { get; set; }
-
-        /// <summary>
-        /// Overall result of the test run (eg Passed, Failed)
-        /// </summary>
-        public Status Status { get; set; }
-
-        /// <summary>
-        /// How long the test suite took to run (in milliseconds)
-        /// </summary>
-        public double Duration { get; set; }
 
         /// <summary>
         /// Total number of tests run
