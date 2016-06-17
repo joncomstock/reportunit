@@ -54,7 +54,7 @@ $('#nav-mobile .report-item > a').filter(function(){
 function initSuiteFilter() {
     $('.filter-suites').click(function () {
         var t = $(this);
-        var $dd = t.closest('.filter-dropdown');
+        var $dd = $('#suite-toggle');
         filterBySuites(t, t.text(), $dd.attr('data-filter'), $dd.attr('data-filter-display'));
     });
 }
@@ -78,7 +78,7 @@ function filterBySuites(t, status, filter, filterDisplay) {
 function initTestFilter() {
     $('.filter-tests').click(function () {
         var t = $(this);
-        var $dd = t.closest('.filter-dropdown');
+        var $dd = $('#tests-toggle');
         filterByTests(t, t.text(), $dd.attr('data-filter'), $dd.attr('data-filter-display'));
     });
 }
@@ -103,7 +103,7 @@ function filterByTests(t, status, filter, filterDisplay) {
 function initCategoryFilter() {
     $('.filter-categories').click(function () {
         var t = $(this);
-        var $dd = t.closest('.filter-dropdown');
+        var $dd = $('#category-toggle');
         filterByCategories(t, t.text(), $dd.attr('data-filter'), $dd.attr('data-filter-display'));
     });
 }
