@@ -14,7 +14,7 @@ $('.details-container').click(function(evt) {
         if (t.is('i')) {
             t = t.parent();
         }
-        
+
         showDynamicModal(t.closest('tr').find('.name').text() + ' StatusMessage', t.next().text());
     }
     
@@ -25,7 +25,6 @@ $('.details-container').click(function(evt) {
 
 /* toggle dashboard on 'Enable Dashboard' click */
 $('#enableDashboard').click(function() {
-    $('.suite-list, .suite-details').toggleClass('v-spacer');
     $(this).toggleClass('enabled').children('i').toggleClass('active');
     $('.dashboard').toggleClass('hide');
 });
@@ -38,81 +37,118 @@ $('.suite').click(function() {
     $('.suite-name-displayed, .details-container').html('');
     
     t.toggleClass('active');
+
     var html = t.find('.suite-content').html();
     var suiteName = t.find('.suite-name').text();
 
     $('.suite-name-displayed').text(suiteName).attr('title', suiteName);
     $('.details-container').append(html);
+    initCategoryFilter();
 });
 
 $('#nav-mobile .report-item > a').filter(function(){
     return this.href.match(/[^\/]+$/)[0] == document.location.pathname.match(/[^\/]+$/)[0];
 }).parent().addClass('active');
 
+
+function initSuiteFilter() {
+    $('.filter-suites').click(function () {
+        var t = $(this);
+        var $dd = t.closest('.filter-dropdown');
+        filterBySuites(t, t.text(), $dd.attr('data-filter'), $dd.attr('data-filter-display'));
+    });
+}
+
 /* filters -> by suite status */
-$('#suite-toggle li').click(function() {
-    var t = $(this);
+function filterBySuites(t, status, filter, filterDisplay) {    
     
     if (!t.hasClass('clear')) {
         resetFilters();
         
-        var status = t.text().toLowerCase();
-        
+        var lowerStatus = status.toLowerCase();
+
         $('#suites .suite').addClass('hide');
-        $('#suites .suite.' + status).removeClass('hide');
+        $('#suites .suite.' + lowerStatus).removeClass('hide');
         
+        filterTests(lowerStatus, status, filter, filterDisplay);
         selectVisSuite()
     }
-});
+}
+
+function initTestFilter() {
+    $('.filter-tests').click(function () {
+        var t = $(this);
+        var $dd = t.closest('.filter-dropdown');
+        filterByTests(t, t.text(), $dd.attr('data-filter'), $dd.attr('data-filter-display'));
+    });
+}
 
 /* filters -> by test status */
-$('#tests-toggle li').click(function() {
-    var t = $(this);
-
+function filterByTests(t, status, filter, filterDisplay) {
+   
     if (!t.hasClass('clear')) {
         resetFilters();
-        
-        var opt = t.text().toLowerCase();
-        
-        $('.suite table tr.test-status:not(.' + opt + '), .details-container tr.test-status:not(.' + opt).addClass('hide');
-        $('.suite table tr.test-status.' + opt + ', .details-container tr.test-status.' + opt).removeClass('hide');
-        
-        hideEmptySuites();
+
+        var opt = status;
+        var lowerOpt = opt.toLowerCase();
+
+        $('.suite table tr.test-status:not(.' + lowerOpt + '), .details-container tr.test-status:not(.' + lowerOpt).addClass('hide');
+        $('.suite table tr.test-status.' + lowerOpt + ', .details-container tr.test-status.' + lowerOpt).removeClass('hide');
+
+        filterTests(lowerOpt, opt, filter, filterDisplay);
         selectVisSuite()
     }
-});
+}
+
+function initCategoryFilter() {
+    $('.filter-categories').click(function () {
+        var t = $(this);
+        var $dd = t.closest('.filter-dropdown');
+        filterByCategories(t, t.text(), $dd.attr('data-filter'), $dd.attr('data-filter-display'));
+    });
+}
 
 /* filters -> by category */
-$('#category-toggle li').click(function() {
-    var t = $(this);
-
+function filterByCategories(t, status, filter, filterDisplay) {
+            
     if (!t.hasClass('clear')) {
         resetFilters();
-        
-        filterByCategory(t.text());
+        filterTests(status, status, filter, filterDisplay);
         selectVisSuite()
     }
-});
+}
 
-$('.clear').click(function() {
-    resetFilters(); selectVisSuite()
-});
+/* The function that takes the table rows and hides and shows appropriately */
+function filterTests(cat, displayCat, filterType, display) {
 
-function filterByCategory(cat) {
-    resetFilters();
-
-    $('td.test-features').each(function() {
+    $('td.test-features').each(function () {        
         if (!($(this).hasClass(cat))) {
-            $(this).closest('tr').addClass('hide');
+            $(this).closest('tr').addClass('hide');            
         }
-    });
+    });    
 
+    displayFilterApplied(displayCat, filterType, display);
     hideEmptySuites();
+    initClear();
+}
+
+function initClear() {
+    $('.clear').click(function () {
+        resetFilters(); selectVisSuite()
+    });
+}
+
+function displayFilterApplied(cat, filterType, display) {
+    var $fa = $('#filters-applied');
+    $fa.removeClass('hide');
+    $fa.find('.' + filterType + '-chip').remove();
+    $fa.append('<div class="chip ' + filterType + '-chip">' + display + cat + '<i class="material-icons clear">close</i><div>');
 }
 
 function hideEmptySuites() {
-    $('.suite').each(function() {
-        var t = $(this);
+
+    $('.suite').each(function () {
+        var t = $(this);        
         
         if (t.find('tr.test-status').length == t.find('tr.test-status.hide').length) {
             t.addClass('hide');
@@ -123,6 +159,7 @@ function hideEmptySuites() {
 function resetFilters() {
     $('.suite, tr.test-status').removeClass('hide');
     $('.suite-toggle li:first-child, .tests-toggle li:first-child, .feature-toggle li:first-child').click();
+    $('#filters-applied').addClass('hide').find('.chip').remove();
 }
 
 function selectVisSuite() {
@@ -136,18 +173,14 @@ function clickListItem(listClass, index) {
 $(document).ready(function() {
 	/* init */
     $('select').material_select();
-    $('.modal-trigger').leanModal();    
-	$('.tooltipped').tooltip({delay: 10});
-
-	/* for a single report item, hide sidenav */
-	if ($('.report-item').length <= 1) {
-		$('#nav-mobile').addClass('hide');
-		
-		pinWidth = '56.5%';
-		
-		$('.pin').css('width', pinWidth);
-		$('.main-wrap, nav').css('padding-left', '20px');
-	}
+    $('.modal-trigger').leanModal({
+        dismissible: true, // Modal can be dismissed by clicking outside of the modal
+        opacity: .5, // Opacity of modal background
+        in_duration: 300, // Transition in duration
+        out_duration: 200 // Transition out duration
+    }
+  );
+    $('.tooltipped').tooltip({ delay: 10 });
 
 	var passedPercentage = Math.round(((passed / total) * 100)) + '%';
 	$('.pass-percentage').text(passedPercentage);
@@ -155,6 +188,10 @@ $(document).ready(function() {
 
 	suitesChart(); testsChart();
 	$('ul.doughnut-legend').addClass('right');
+
+	initSuiteFilter();
+	initTestFilter();
+	initCategoryFilter();
 	
 	resetFilters();
 	$('.suite:first-child').click();
@@ -171,6 +208,8 @@ var options = {
 
 /* report -> suites chart */
 function suitesChart() {
+
+    var suiteAnalysis = $('#suite-analysis');
 	if (!$('#suite-analysis').length) {
 		return false;
 	}
@@ -178,49 +217,61 @@ function suitesChart() {
 	var passed = $('.suite-result.passed').length;
 	var failed = $('.suite-result.failed').length;
 	var others = $('.suite-result.error, .suite-result.inconclusive, .suite-result.skipped').length;
-	
+
 	$('.suite-pass-count').text(passed);
 	$('.suite-fail-count').text(failed);
 	$('.suite-others-count').text(others);
 	
 	var data = [
-		{ value: passed, color: '#00af00', highlight: '#32bf32', label: 'Pass' },
-		{ value: failed, color:'#F7464A', highlight: '#FF5A5E', label: 'Fail' },
+		{ value: passed, color: '#00af00', highlight: '#32bf32', label: 'Passed' },
+		{ value: failed, color:'#F7464A', highlight: '#FF5A5E', label: 'Failed' },
 		{ value: $('.suite-result.error').length, color:'#ff6347', highlight: '#ff826b', label: 'Error' },
-		{ value: $('.suite-result.inconclusive').length, color: '#FDB45C', highlight: '#FFC870', label: 'Warning' },
-		{ value: $('.suite-result.skipped').length, color: '#1e90ff', highlight: '#4aa6ff', label: 'Skip' }
+		{ value: $('.suite-result.inconclusive').length, color: '#FDB45C', highlight: '#FFC870', label: 'Inconclusive' },
+		{ value: $('.suite-result.skipped').length, color: '#1e90ff', highlight: '#4aa6ff', label: 'Skipped' }
 	];
 	
-	var ctx = $('#suite-analysis').get(0).getContext('2d');
+	var ctx = suiteAnalysis.get(0).getContext('2d');
 	var suiteChart = new Chart(ctx).Doughnut(data, options);
 	drawLegend(suiteChart, 'suite-analysis');
+
+	var suiteToggle = $('#suite-toggle');
+
+	suiteAnalysis.click(
+        function(evt) {
+            var activePoints = suiteChart.getSegmentsAtEvent(evt);
+            var firstPoint = activePoints[0];            
+            filterBySuites($(this), firstPoint.label, suiteToggle.attr('data-filter'), suiteToggle.attr('data-filter-display'));
+        }
+    )
 }
 
 /* test case counts */
-var total = $('.test-name').length;
-var passed = $('td.passed').length;
-var failed = $('td.failed').length;
-var inconclusive = $('td.inconclusive').length;
-var errors = $('td.error').length;
-var skipped = $('td.skipped').length;
+var $suites = $('#suites');
+var total = $suites.attr('data-total');
+var passed = $suites.attr('data-passed');
+var failed = $suites.attr('data-failed');
+var inconclusive = $suites.attr('data-inconclusive');
+var errors = $suites.attr('data-errors');
+var skipped = $suites.attr('data-skipped');
 
 /* report -> tests chart */
 function testsChart() {
-	if (!$('#test-analysis').length) {
+    var testAnalysis = $('#test-analysis');
+    if (!testAnalysis.length) {
 		return false;
 	}
 
     var data = {};
     
     if ($('body.summary').length > 0) {
-        total = parseInt($('#total-tests').text());
-        passed = parseInt($('#total-passed').text());
-        failed = parseInt($('#total-failed').text());
-        others = parseInt($('#total-others').text());
+        total = parseInt($('#total-tests').text(), 10);
+        passed = parseInt($('#total-passed').text(), 10);
+        failed = parseInt($('#total-failed').text(), 10);
+        others = parseInt($('#total-others').text(), 10);
         
         data = [
-            { value: passed, color: '#00af00', highlight: '#32bf32', label: 'Pass' },
-            { value: failed, color:'#F7464A', highlight: '#FF5A5E', label: 'Fail' },
+            { value: passed, color: '#00af00', highlight: '#32bf32', label: 'Passed' },
+            { value: failed, color:'#F7464A', highlight: '#FF5A5E', label: 'Failed' },
             { value: others, color: '#1e90ff', highlight: '#4aa6ff', label: 'Others' }
         ];
         
@@ -228,22 +279,32 @@ function testsChart() {
     }
     else {
         data = [
-            { value: passed, color: '#00af00', highlight: '#32bf32', label: 'Pass' },
-            { value: failed, color:'#F7464A', highlight: '#FF5A5E', label: 'Fail' },
+            { value: passed, color: '#00af00', highlight: '#32bf32', label: 'Passed' },
+            { value: failed, color:'#F7464A', highlight: '#FF5A5E', label: 'Failed' },
             { value: errors, color:'#ff6347', highlight: '#ff826b', label: 'Error' },
-            { value: inconclusive, color: '#FDB45C', highlight: '#FFC870', label: 'Warning' },
-            { value: skipped, color: '#1e90ff', highlight: '#4aa6ff', label: 'Skip' }
+            { value: inconclusive, color: '#FDB45C', highlight: '#FFC870', label: 'Inconclusive' },
+            { value: skipped, color: '#1e90ff', highlight: '#4aa6ff', label: 'Skipped' }
         ];
         
-        $('.test-others-count').text(errors + inconclusive + skipped);
+        $('.test-others-count').text(parseInt(errors, 10) + parseInt(inconclusive, 10) + parseInt(skipped, 10));
     }
 	
 	$('.test-pass-count').text(passed);
 	$('.test-fail-count').text(failed);
 	
-	var ctx = $('#test-analysis').get(0).getContext('2d');
+	var ctx = testAnalysis.get(0).getContext('2d');
 	testChart = new Chart(ctx).Doughnut(data, options);
 	drawLegend(testChart, 'test-analysis');
+
+	var testsToggle = $('#tests-toggle');
+
+	testAnalysis.click(
+        function (evt) {
+            var activePoints = testChart.getSegmentsAtEvent(evt);
+            var firstPoint = activePoints[0];
+            filterByTests($(this), firstPoint.label, testsToggle.attr('data-filter'), testsToggle.attr('data-filter-display'));
+        }
+    )
 }
 
 /* draw legend for test and step charts [DASHBOARD] */

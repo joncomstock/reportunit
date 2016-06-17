@@ -5,7 +5,13 @@ body {
 	font-size: 14px;
 }
 header, main, footer {
-    padding-left: 240px;
+    padding-left: 240px;  
+}
+main {
+    padding-top: 48px;
+}
+main.single-report, header.single-report {
+    padding-left: 0;
 }
 pre {
 	background-color: #f8f9fa;
@@ -21,35 +27,16 @@ pre {
 	white-space: -o-pre-wrap;  
 	word-wrap: break-word;     
 }
-td.test-status {
-	min-width: 25%;
-}
-th {
-    background: #f8f8f8;
-}
 th, td {
-    border: 1px solid #e5e5e5;
-	padding: 10px;
-	word-break: break-all;
+    word-break: break-all;
 }
-
 .truncate {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 .no-break {
     word-break: keep-all;
-}
-
-.center-parent {
-    display: table;
-}
-
-.center-child {
-    display: table-cell;
-    vertical-align: middle;
 }
 /* -- [ material overrides ] -- */
 .z-depth-1, nav, .card-panel, .card, .toast, .btn, .btn-large, .btn-floating, .collapsible, .side-nav {
@@ -73,6 +60,7 @@ th, td {
 }
 .dropdown-content {
 	min-width: 150px;
+    max-height: 260px;
 }
 .dropdown-content li {
 	min-height: auto;
@@ -148,6 +136,7 @@ th, td {
     font-size: 12px;
     margin: 2px 4px;
     padding: 0 5px 2px;
+    cursor: pointer;
 }
 .badge.info {
     background: #03a9f4;
@@ -158,29 +147,39 @@ th, td {
 .badge > i {
     color: #fff;
 }
-	/* ---- [ icon ] ---- */
-	.icon {
-		border: 1px solid #888888;
-		border-radius: 100%;
-		color: #888888;
-		cursor: default;
-		font-size: 0.9rem !important;
-		padding: 1px 5px;
-	}
-	.icon.active {
-		border-color: #00BCD4;
-		color: #00BCD4;
-	}
-	.icon:hover {
-		border-color: #00BCD4;
-		color: #00BCD4;
-	    cursor: pointer;
-	}
+/* ---- [ icon ] ---- */
+.icon .hover-blue {
+    color: #81d4fa;
+}
+
+.filters .icon {
+	border: 1px solid #888888;
+	border-radius: 100%;
+	color: #888888;
+	cursor: default;
+	/*font-size: 0.9rem !important;*/
+	padding: 1px 5px;
+}
+.filters .icon.active {
+	border-color: #81d4fa;
+	color: #81d4fa;
+}
+.filters .icon:hover {
+	border-color: #81d4fa;
+	color: #81d4fa;
+	cursor: pointer;
+}
 
 /* ---- [ sidenav / topnav ] ---- */
 nav {
 	background: #29ccf7;
 	padding-right: 20px;
+}
+nav.fixed {
+    position: fixed;
+    top: 0;
+    z-index: 1;
+    padding-right: 240px;
 }
 .nav-right a {
 	padding: 0;
@@ -240,10 +239,9 @@ a.button-collapse.top-nav {
 .logo {
     background: #239fca none repeat scroll 0 0;
     padding-left: 15px;
-    /*width: 200px;*/
 }
 .file-name, .page-title {
-	padding-left: 25px;
+	padding-left: 13px;
 }
 .console-logs-icon, .run-info-icon {
 	font-size: 20px;
@@ -257,16 +255,9 @@ a.button-collapse.top-nav {
 	margin-bottom: 0;
 }
 
-/*#main-content {
-    margin-left: 260px;
-}*/
-
 /* ---- [ containers ] ---- */
 .no-tests {
     margin-left: 11px;
-}
-.report-list > table {
-    margin-bottom: 50px;
 }
 .suite-details {
     overflow-x: auto;
@@ -323,11 +314,6 @@ a.button-collapse.top-nav {
 }
 
 /* ---- [ filters ] ---- */
-.filters {
-	border-bottom: 1px solid #eee;
-	margin-bottom: 0;
-	padding: 25px 20px;
-}
 .filters > div {
 	display: inline-block;    
 }
@@ -345,6 +331,9 @@ a.button-collapse.top-nav {
 	list-style: none;
 	padding: 0 20px;
 }
+tr.suite .icon {
+    vertical-align: middle;
+}
 .suite.active {
 	background: #f7f7f7;
 	font-weight: 600;
@@ -352,9 +341,8 @@ a.button-collapse.top-nav {
 .suite:hover {
     cursor: pointer;
 }
-.suite-head {
-	display: block;
-	padding: 15px 0;
+.suite:hover .icon {
+    color: #81d4fa;
 }
 .suite-desc {
 	margin-top: 10px;
@@ -383,6 +371,9 @@ p.description {
 }
 .endedAt {
 	margin-left: 4px;
+}
+th[data-field="result"] {
+    width: 25%;
 }
 
 /* ---- [ details container ] ---- */
@@ -432,13 +423,12 @@ td > .label {
 	font-weight: 400;
 	padding: 0;
 }
-.label.category {
-    border: 1px solid #00aeef;
-	border-radius: 5px;
-    color: #00aeef !important;
-	padding: 4px 7px;
-    margin-bottom: 0.25rem;
-    word-break: normal;
+.category-list > div {
+    margin-bottom: 0.5rem;    
+}
+
+.category-list > .chip {
+    cursor: pointer;
 }
 
 /* -- [ progress bar ] -- */
@@ -453,7 +443,7 @@ td > .label {
 	border-radius: 4px;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;
 	height: 15px;
-	margin: 0;
+	margin: 0 auto;
 	max-width: 350px;
 	overflow: hidden;
 }
@@ -535,6 +525,9 @@ td > .label {
     .page-title {
         padding-left: 50px;
     }
+    nav.fixed {
+    padding-right: 0;
+}
 }
 @media (min-width: 992px) and (max-width: 1300px) {
 	/* fix for pie charts going out of bounds */
