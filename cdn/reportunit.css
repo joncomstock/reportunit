@@ -6,6 +6,15 @@ body {
 }
 header, main, footer {
     padding-left: 240px;  
+    -webkit-transition: left .3s ease;
+    -moz-transition: left .3s ease;
+    -o-transition: left .3s ease;
+    -ms-transition: left .3s ease;
+    transition: left .3s ease; 
+}
+
+header.expand, main.expand, footer.expand {
+    padding-left: 60px;
 }
 main {
     padding-top: 48px;
@@ -181,6 +190,9 @@ nav.fixed {
     z-index: 1;
     padding-right: 240px;
 }
+header.expand nav.fixed {
+    padding-right: 60px;
+}
 .nav-right a {
 	padding: 0;
 }
@@ -190,7 +202,10 @@ nav.fixed {
     -moz-transition: left .3s ease;
     -o-transition: left .3s ease;
     -ms-transition: left .3s ease;
-    transition: left .3s ease; }
+    transition: left .3s ease; 
+}
+.side-nav.collapse {
+    left: -190px !important;
 }
 nav, nav .nav-wrapper i, nav a.button-collapse, nav a.button-collapse i, nav li, .side-nav a, nav input, nav label, .brand-logo {
 	color: #fff !important;
@@ -220,6 +235,11 @@ ul.side-nav.fixed li.logo:hover {
 .side-nav > li.report-item i {
 	margin-right: 10px;
 }
+
+.side-nav.collapse > li.report-item i {
+    position: relative;
+    left: 177px;
+}
 nav a.button-collapse {
 	display: inline-block;
 }
@@ -234,8 +254,8 @@ nav a.button-collapse {
 a.button-collapse.top-nav.full {
     line-height: 122px;
 }
-a.button-collapse.top-nav {
-    position: absolute;
+a.button-collapse.top-nav, #button-shrink.top-nav, #button-expand.top-nav {
+    position: fixed;
     text-align: center;
     height: 48px;
     width: 48px;
@@ -246,6 +266,9 @@ a.button-collapse.top-nav {
     color: #fff;
     font-size: 36px;
     z-index: 9999;
+}
+#button-expand.top-nav {
+    left: 0px;
 }
 .logo {
     background: #239fca none repeat scroll 0 0;
@@ -429,6 +452,7 @@ td > .label {
 
 .category-list > .chip {
     cursor: pointer;
+    margin-top: 0.5rem;
 }
 
 /* -- [ progress bar ] -- */

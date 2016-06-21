@@ -197,9 +197,10 @@ $(document).ready(function() {
 	$('.suite:first-child').click();
     // Initialize collapse button
 	$(".button-collapse").sideNav();
-	$("#button-shrink").click(function (e) {
+
+	$('.button-shrink').click(function (e) {
 	    e.stopPropagation();
-	    $("#nav-mobile").toggleClass("collapse");
+	    toggleMenu();
 	});
 });
 
@@ -211,7 +212,12 @@ var options = {
 };
 
 function toggleMenu() {
-    var isAnimationRunning = false;
+    $('#nav-mobile').toggleClass('collapse');
+    $('main').toggleClass('expand');
+    $('header').toggleClass('expand');
+    $('footer').toggleClass('expand');
+    $('#button-shrink').toggleClass('hide');
+    $('#button-expand').toggleClass('hide');
 }
 
 /* report -> suites chart */
