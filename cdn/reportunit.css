@@ -186,11 +186,22 @@ nav.fixed {
 }
 .side-nav {
     background: #f3f3f3;
+    -webkit-transition: left .3s ease;
+    -moz-transition: left .3s ease;
+    -o-transition: left .3s ease;
+    -ms-transition: left .3s ease;
+    transition: left .3s ease; }
 }
-nav, nav .nav-wrapper i, nav a.button-collapse, nav a.button-collapse i, nav li, .side-nav a, nav input, nav label {
+nav, nav .nav-wrapper i, nav a.button-collapse, nav a.button-collapse i, nav li, .side-nav a, nav input, nav label, .brand-logo {
 	color: #fff !important;
 	height: 48px;
 	line-height: 48px;
+}
+.brand-logo {
+    padding: 0 15px;
+}
+ul.side-nav.fixed li.logo:hover {
+    background-color: #239fca;
 }
 .side-nav > li {
 	display: block;
@@ -228,13 +239,13 @@ a.button-collapse.top-nav {
     text-align: center;
     height: 48px;
     width: 48px;
-    left: 0;
+    left: 190px;
     top: -4px;
     float: none;
     margin-left: 0;
     color: #fff;
     font-size: 36px;
-    z-index: 2;
+    z-index: 9999;
 }
 .logo {
     background: #239fca none repeat scroll 0 0;
@@ -413,7 +424,7 @@ td > .label {
 	font-weight: 400;
 }
 .category-list > div {
-    margin-bottom: 0.5rem;    
+    margin-right: 0.5rem;    
 }
 
 .category-list > .chip {
@@ -515,8 +526,11 @@ td > .label {
         padding-left: 50px;
     }
     nav.fixed {
-    padding-right: 0;
-}
+        padding-right: 0;
+    }
+    a.button-collapse.top-nav {
+        left: 0;
+    }
 }
 @media (min-width: 992px) and (max-width: 1300px) {
 	/* fix for pie charts going out of bounds */

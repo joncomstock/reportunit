@@ -197,6 +197,10 @@ $(document).ready(function() {
 	$('.suite:first-child').click();
     // Initialize collapse button
 	$(".button-collapse").sideNav();
+	$("#button-shrink").click(function (e) {
+	    e.stopPropagation();
+	    $("#nav-mobile").toggleClass("collapse");
+	});
 });
 
 var options = {
@@ -205,6 +209,10 @@ var options = {
 	animationSteps : 1,
 	legendTemplate : '<ul class=\'<%=name.toLowerCase()%>-legend\'><% for (var i=0; i<segments.length; i++){%><li><span style=\'background-color:<%=segments[i].fillColor%>\'></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>'
 };
+
+function toggleMenu() {
+    var isAnimationRunning = false;
+}
 
 /* report -> suites chart */
 function suitesChart() {

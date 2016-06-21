@@ -93,9 +93,15 @@ namespace ReportUnit.Model
                         <a href='#' data-activates='nav-mobile' class='button-collapse top-nav hide-on-large-only'>
                             <i class='material-icons'>menu</i>
                         </a>
+                        <a href='#' data-activates='#' class='button-shrink top-nav hide-on-med-and-down' id='button-shrink'>
+                            <i class='material-icons'>chevron_left</i>
+                        </a>
+                        <a href='#' data-activates='#' class='button-shrink top-nav hide-on-med-and-down hide' id='button-expand'>
+                            <i class='material-icons'>chevron_right</i>
+                        </a>
                         <ul id='nav-mobile' class='{1}'>
                             <li class='logo'>
-                                <a id='logo-container' href='#' class='brand-logo'><span>ReportUnit</span></a>
+                                <span class='brand-logo'>ReportUnit</span>
                             </li>
                             @Model.SideNavLinks
                         </ul>                                                                                                                                    

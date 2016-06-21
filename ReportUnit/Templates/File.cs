@@ -221,13 +221,9 @@ namespace ReportUnit.Templates
                                                                         <tr>
                                                                             <th>Test Name</th>
                                                                             <th class='no-break center'>Status</th>
-                                                                            @if (Model.TestSuiteList.Count > 0 && Model.TestSuiteList[ix].TestList.Any(x => x.CategoryList.Count > 0))
-                                                                            {{
-                                                                                <th class='no-break center'>Category</th>
-                                                                            }}
                                                                             @if (Model.TestSuiteList.Count > 0 && Model.TestSuiteList[ix].TestList.Where(x => !String.IsNullOrEmpty(x.Description) || !String.IsNullOrEmpty(x.StatusMessage)).Count() > 0) 
                                                                             {{
-                                                                                <th class='no-break center'>Status <br /> Message</th>
+                                                                                <th class='no-break center'>Message</th>
                                                                             }}
                                                                             <th class='no-break center'>Time</th>
                                                                         </tr>
@@ -242,32 +238,38 @@ namespace ReportUnit.Templates
                                                                                     {{
                                                                                         <a class='showDescription name' href='#'>@testName</a>
                                                                                         <p class='hide description'>@test.Description</p>
-                                                                                    }}
-                                                                                    else
-                                                                                    {{
-                                                                                        <span class='name'>@testName</span>
-                                                                                    }}
-                                                                                </td>
-                                                                                <td class='test-status no-break center @test.Status.ToString().ToLower()'>
-                                                                                    <span class='label @test.Status.ToString().ToLower()'>@test.Status.ToString()</span>
-                                                                                </td>
-                                                                                @if (Model.TestSuiteList.Count > 0 && Model.TestSuiteList[ix].TestList.Any(x => x.CategoryList.Count > 0))
-                                                                                {{
-                                                                                    <td>
-                                                                                        @if (test.CategoryList.Count > 0)
+
+                                                                                        if (Model.TestSuiteList.Count > 0 && test.CategoryList.Count > 0)
                                                                                         {{
-                                                                                            <div class='category-list center'>
+                                                                                            <div class='category-list'>
                                                                                                 @foreach (var cat in test.CategoryList)
                                                                                                 {{
                                                                                                     <div class='chip no-break @cat filter-categories' data-filter='category' data-filter-display='Category: '>
                                                                                                         @cat
                                                                                                     </div>
-                                                                                                    <br />
                                                                                                 }}
                                                                                             </div>
                                                                                         }}
-                                                                                    </td>
-                                                                                }}
+                                                                                    }}
+                                                                                    else
+                                                                                    {{
+                                                                                        <span class='name'>@testName</span>
+                                                                                        if (Model.TestSuiteList.Count > 0 && test.CategoryList.Count > 0)
+                                                                                        {{
+                                                                                            <div class='category-list'>
+                                                                                                @foreach (var cat in test.CategoryList)
+                                                                                                {{
+                                                                                                    <div class='chip no-break @cat filter-categories' data-filter='category' data-filter-display='Category: '>
+                                                                                                        @cat
+                                                                                                    </div>
+                                                                                                }}
+                                                                                            </div>
+                                                                                        }}
+                                                                                    }}
+                                                                                </td>
+                                                                                <td class='test-status no-break center @test.Status.ToString().ToLower()'>
+                                                                                    <span class='label @test.Status.ToString().ToLower()'>@test.Status.ToString()</span>
+                                                                                </td>                                                                                
                                                                                 @if (Model.TestSuiteList.Count > 0 && Model.TestSuiteList[ix].TestList.Where(x => !String.IsNullOrEmpty(x.StatusMessage)).Count() > 0) 
                                                                                 {{
                                                                                     if (!String.IsNullOrEmpty(@test.StatusMessage)) 
@@ -285,7 +287,7 @@ namespace ReportUnit.Templates
                                                                                 <td class='center'>
                                                                                     @if(!String.IsNullOrEmpty(test.TotalTime))
                                                                                     {{
-                                                                                        <span alt='Test total time' title='Test total time' class='label blue lighten-2 text-white'>
+                                                                                        <span alt='Test total time' title='Test total time' class='label blue lighten-2 text-white no-break'>
                                                                                             @test.TotalTime
                                                                                         </span>
                                                                                     }}
