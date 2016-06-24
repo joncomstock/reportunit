@@ -129,8 +129,9 @@ namespace ReportUnit.Model
                     <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>
 	                <!--<link href='https://cdn.rawgit.com/reportunit/reportunit/005dcf934c5a53e60b9ec88a2a118930b433c453/cdn/reportunit.css' type='text/css' rel='stylesheet' />-->
                     <!--<link href='https://cdn.rawgit.com/joncomstock/reportunit/master/cdn/reportunit.css' type='text/css' rel='stylesheet' />-->
-                    <!--<link href='https://rawgit.com/joncomstock/reportunit/master/cdn/reportunit.css' type='text/css' rel='stylesheet' />-->
-                    <link href='reportunit.css' type='text/css' rel='stylesheet' />");
+                    <link href='https://rawgit.com/joncomstock/reportunit/master/cdn/reportunit.css' type='text/css' rel='stylesheet' />
+                    <!--<link href='reportunit.css' type='text/css' rel='stylesheet' />-->
+                    ");
 
                 return headHtml;
             }
@@ -145,8 +146,8 @@ namespace ReportUnit.Model
                     <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
                     <!--<script src='https://cdn.rawgit.com/reportunit/reportunit/35df38c6ab8b35526c22b920e24993ecc9357c2a/cdn/reportunit.js' type='text/javascript'></script>-->
                     <!--<script scr='https://cdn.rawgit.com/joncomstock/reportunit/master/cdn/reportunit.js' type='text/javascript'></script>-->
-                    <!--<script src='https://rawgit.com/joncomstock/reportunit/master/cdn/reportunit.js' type='text/javascript'></script>-->
-                    <script src='reportunit.js' type = 'text/javascript'></script>
+                    <script src='https://rawgit.com/joncomstock/reportunit/master/cdn/reportunit.js' type='text/javascript'></script>
+                    <!--<script src='reportunit.js' type = 'text/javascript'></script>-->
                 ");
             }
         }
